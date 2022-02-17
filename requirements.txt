@@ -27,3 +27,8 @@ six>=1.14
 joblib
 memoized-property
 termcolor
+
+# WAV file packages
+librosa
+scipy #scipy.io.wavfile
+IPython #play audio files
