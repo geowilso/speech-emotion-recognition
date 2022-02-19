@@ -9,6 +9,7 @@ jupyter
 numpy
 pandas
 scikit-learn
+tensorflow
 
 # tests/linter
 black
@@ -36,6 +37,8 @@ IPython #play audio files
 SoundFile
 wave
 sounddevice
+pyaudio
+
 
 #data viz
 matplotlib
