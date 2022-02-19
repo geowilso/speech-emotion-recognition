@@ -37,3 +37,8 @@ SoundFile
 wave
 scikits
 sounddevice
+
+#data viz
+matplotlib
+seaborn
+plotly
