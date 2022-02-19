@@ -35,7 +35,6 @@ scipy #scipy.io.wavfile
 IPython #play audio files
 SoundFile
 wave
-scikits
 sounddevice
 
 #data viz
