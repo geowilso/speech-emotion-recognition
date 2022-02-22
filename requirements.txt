@@ -11,6 +11,7 @@ pandas
 scikit-learn
 tensorflow
 xgboost
+statsmodels
 
 # tests/linter
 black
