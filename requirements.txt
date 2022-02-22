@@ -10,6 +10,7 @@ numpy
 pandas
 scikit-learn
 tensorflow
+xgboost
 
 # tests/linter
 black
@@ -37,7 +38,7 @@ IPython #play audio files
 SoundFile
 wave
 sounddevice
-pyaudio
+#pyaudio
 
 
 #data viz
