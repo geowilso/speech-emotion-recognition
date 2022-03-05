@@ -71,7 +71,8 @@ def get_data():
             emotion.append('neutral')
         else:
             emotion.append('unknown')
-        path.append('raw_data/wav_files/' + i)
+        path.append(
+            'gs://batch-753-london_speech_emotion_recognition_data/raw_data/wav_files/' + i)
 
     crema_df = pd.DataFrame(emotion, columns = ['emotion'])
     crema_df = pd.concat([crema_df,pd.DataFrame(gender, columns = ['gender'])],axis=1)
@@ -113,7 +114,7 @@ def get_data():
             emotion.append('sad')
         else:
             emotion.append('Unknown')
-        path.append(f)
+        path.append('gs://batch-753-london_speech_emotion_recognition_data/' + f)
 
     tess_df = pd.DataFrame(emotion, columns = ['emotion'])
     tess_df['source'] = 'tess'
@@ -149,7 +150,7 @@ def get_data():
         else:
             temp = "male"
         gender.append(temp)
-        path.append('raw_data/ravdess/' + x + '/' + f)
+        path.append('gs://batch-753-london_speech_emotion_recognition_data/' + x)
 
     ravdess_df = pd.DataFrame(emotion)
     ravdess_df = ravdess_df.replace({1:'neutral', 2:'neutral', 3:'happy', 4:'sad', 5:'angry', 6:'fear', 7:'disgust', 8:'surprise'})
@@ -187,7 +188,8 @@ def get_data():
             emotion.append('surprise')
         else:
             emotion.append('error')
-        path.append('raw_data/savee/' + i)
+        path.append('gs://batch-753-london_speech_emotion_recognition_data/' +
+                    i)
 
     # Now check out the label count distribution
     savee_df = pd.DataFrame(emotion, columns = ['emotion'])
@@ -227,19 +229,29 @@ def get_data():
             return 'negative'
 
     targets = pd.concat([crema_df,tess_df,ravdess_df,savee_df])
+    # print(len(targets))
+    # print(targets.info())
+
+    # targets = targets.drop(targets[targets.emotion=='surprise'].index)
+    # targets = targets.drop(targets[targets.emotion == 'fear'].index)
+    # targets = targets.drop(targets[targets.emotion == 'disgust'].index)
+
     targets = targets[targets['emotion']!='surprise']
     targets = targets[targets['emotion']!='fear']
     targets = targets[targets['emotion']!='disgust']
-    targets.drop_duplicates(inplace=True)
+    # print(len(targets))
+    # print(targets.info())
+    # targets.drop_duplicates(inplace=True)
     # print(targets.loc[targets.duplicated(), :])
     # print(targets.duplicated().sum())
     # print(targets.nunique())
     # print(targets['emotion'].unique())
     # print(savee_df.shape)
-    # print(ravdess_df.shape)
+    print(ravdess_df['path'][0])
     # print(crema_df.shape)
     # print(tess_df.shape)
     # print(targets.shape)
+    print(targets)
     return targets
 
 
