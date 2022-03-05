@@ -72,7 +72,7 @@ def get_data():
         else:
             emotion.append('unknown')
         path.append(
-            'gs://batch-753-london_speech_emotion_recognition_data/raw_data/wav_files/' + i)
+            'raw_data/wav_files/' + i)
 
     crema_df = pd.DataFrame(emotion, columns = ['emotion'])
     crema_df = pd.concat([crema_df,pd.DataFrame(gender, columns = ['gender'])],axis=1)
@@ -114,7 +114,7 @@ def get_data():
             emotion.append('sad')
         else:
             emotion.append('Unknown')
-        path.append('gs://batch-753-london_speech_emotion_recognition_data/' + f)
+        path.append(f)
 
     tess_df = pd.DataFrame(emotion, columns = ['emotion'])
     tess_df['source'] = 'tess'
@@ -150,7 +150,7 @@ def get_data():
         else:
             temp = "male"
         gender.append(temp)
-        path.append('gs://batch-753-london_speech_emotion_recognition_data/' + x)
+        path.append(x)
 
     ravdess_df = pd.DataFrame(emotion)
     ravdess_df = ravdess_df.replace({1:'neutral', 2:'neutral', 3:'happy', 4:'sad', 5:'angry', 6:'fear', 7:'disgust', 8:'surprise'})
@@ -188,8 +188,7 @@ def get_data():
             emotion.append('surprise')
         else:
             emotion.append('error')
-        path.append('gs://batch-753-london_speech_emotion_recognition_data/' +
-                    i)
+        path.append(i)
 
     # Now check out the label count distribution
     savee_df = pd.DataFrame(emotion, columns = ['emotion'])

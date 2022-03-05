@@ -1,7 +1,12 @@
-from Speech-Emotion-Recognition.data import get_data, clean_data
+from data import get_data #, clean_data
 
-import pandas as pd
+from google.cloud import storage
+
 import numpy as np
+import io
+import soundfile as sf
+
+from params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
 
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.utils import to_categorical
@@ -33,10 +38,22 @@ def extract_features(df,
                      zcr=True,
                      rms=True):
 
+    #connect to bucket
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+
+
+
     features = []
 
     for path in tqdm(df['path']):
-        wav = librosa.load(path, sr=sr, offset=offset, duration = 10)
+
+        file = bucket.blob(path)
+        file_as_string = file.download_as_string()
+        wav = sf.read(io.BytesIO(file_as_string))
+        # print(data.shape)
+        # left_channel = data[:,0]
+        #wav = librosa.load(data, sr=sr, offset=offset, duration = 10)
 
         mfcc = librosa.feature.mfcc(wav[0], sr=sr, n_mfcc=n_mfcc)
         array = cut_or_pad(mfcc,length)
@@ -101,6 +118,8 @@ def targets(df):
 
 if __name__ == '__main__':
     df = get_data()
+    print(df.head())
+    print(df.shape)
     X = extract_features(df,
                         sr=44100,
                         length=250,
