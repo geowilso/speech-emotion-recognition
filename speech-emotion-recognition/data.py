@@ -42,7 +42,6 @@ def get_data():
             crema_directory_list.append(file_name[1])
 
     crema_directory_list.sort()
-    # print(crema_directory_list[0:10])
 
     gender = []
     emotion = []
@@ -88,36 +87,39 @@ def get_data():
         file_name = file.name.split('tess/')
         if '.wav' in file_name[1]:
             tess_directory_list.append(file_name[1])
-
     path = []
     emotion = []
+    tessname = []
 
+    # print(tess_directory_list)
     for i in tess_directory_list:
-        fname = ('raw_data/tess/' + i)
-        for f in fname:
-            if i == 'OAF_angry' or i == 'YAF_angry':
-                emotion.append('angry')
-            elif i == 'OAF_disgust' or i == 'YAF_disgust':
-                emotion.append('disgust')
-            elif i == 'OAF_Fear' or i == 'YAF_fear':
-                emotion.append('fear')
-            elif i == 'OAF_happy' or i == 'YAF_happy':
-                emotion.append('happy')
-            elif i == 'OAF_neutral' or i == 'YAF_neutral':
-                emotion.append('neutral')
-            elif i == 'OAF_Pleasant_surprise' or i == 'YAF_pleasant_surprised':
-                emotion.append('surprise')
-            elif i == 'OAF_Sad' or i == 'YAF_sad':
-                emotion.append('sad')
-            else:
-                emotion.append('Unknown')
-            path.append('raw_data/tess/' + i + "/" + f)
+        tessname.append('raw_data/tess/' + i)
+        # print(tessname)
+    for f in tessname:
+        # print(i)
+        if 'OAF_angry' or 'YAF_angry' in f:
+            emotion.append('angry')
+        elif 'OAF_disgust' or 'YAF_disgust' in f:
+            emotion.append('disgust')
+        elif 'OAF_Fear' or 'YAF_fear' in f:
+            emotion.append('fear')
+        elif 'OAF_happy' or 'YAF_happy' in f:
+            emotion.append('happy')
+        elif 'OAF_neutral' or 'YAF_neutral' in f:
+            emotion.append('neutral')
+        elif 'OAF_Pleasant_surprise' or 'YAF_pleasant_surprised' in f:
+            emotion.append('surprise')
+        elif 'OAF_Sad' or 'YAF_sad' in f:
+            emotion.append('sad')
+        else:
+            emotion.append('Unknown')
+        path.append(f)
 
     tess_df = pd.DataFrame(emotion, columns = ['emotion'])
     tess_df['source'] = 'tess'
     tess_df = pd.concat([tess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
     tess_df['gender'] = 'female'
-
+    # print(tess_df)
 
     #select ravdess folder from dataset
     ravdess = bucket.list_blobs(prefix='raw_data/ravdess/')
@@ -136,8 +138,6 @@ def get_data():
     fname = []
     for x in ravdess_directory_list:
         fname.append('raw_data/ravdess/' + x)
-        # print(type(fname))
-        # print(fname)
     for f in fname:
         # print(f)
         part = f.split('.')[0].split('-')
@@ -164,7 +164,9 @@ def get_data():
     savee_directory_list=[]
 
     for file in savee:
-        ravdess_directory_list.append(file.name)
+        file_name = file.name.split('savee/')
+        if '.wav' in file_name[1]:
+            savee_directory_list.append(file_name[1])
 
     emotion=[]
     path = []
@@ -185,7 +187,7 @@ def get_data():
             emotion.append('surprise')
         else:
             emotion.append('error')
-        path.append(savee + i)
+        path.append('raw_data/savee/' + i)
 
     # Now check out the label count distribution
     savee_df = pd.DataFrame(emotion, columns = ['emotion'])
@@ -226,8 +228,18 @@ def get_data():
 
     targets = pd.concat([crema_df,tess_df,ravdess_df,savee_df])
     targets = targets[targets['emotion']!='surprise']
-
-    print(targets)
+    targets = targets[targets['emotion']!='fear']
+    targets = targets[targets['emotion']!='disgust']
+    targets.drop_duplicates(inplace=True)
+    # print(targets.loc[targets.duplicated(), :])
+    # print(targets.duplicated().sum())
+    # print(targets.nunique())
+    # print(targets['emotion'].unique())
+    # print(savee_df.shape)
+    # print(ravdess_df.shape)
+    # print(crema_df.shape)
+    # print(tess_df.shape)
+    # print(targets.shape)
     return targets
 
 
