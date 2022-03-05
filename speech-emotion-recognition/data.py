@@ -27,21 +27,30 @@ import warnings
 def get_data():
     """method to get the training data (or a portion of it) from google cloud bucket"""
 
+    #connect to bucket
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
-    blobs = list(bucket.list_blobs(prefix='raw_data/wav_files'))
 
-    CREMA = BUCKET_TRAIN_DATA_PATH
-    dir_list = os.listdir(CREMA)
-    dir_list.sort()
-    print(dir_list[0:10])
+    #select crema folder from dataset
+    crema = bucket.list_blobs(prefix='raw_data/wav_files/')
+    crema_directory_list = []
+
+    #crema load files from bucket as crema_directory_list
+    for file in crema:
+        file_name = file.name.split('wav_files/')
+        if '.wav' in file_name[1]:
+            crema_directory_list.append(file_name[1])
+
+    crema_directory_list.sort()
+    # print(crema_directory_list[0:10])
+
     gender = []
     emotion = []
     path = []
     female = [1002,1003,1004,1006,1007,1008,1009,1010,1012,1013,1018,1020,1021,1024,1025,1028,1029,1030,1037,1043,1046,1047,1049,
-            1052,1053,1054,1055,1056,1058,1060,1061,1063,1072,1073,1074,1075,1076,1078,1079,1082,1084,1089,1091]
+          1052,1053,1054,1055,1056,1058,1060,1061,1063,1072,1073,1074,1075,1076,1078,1079,1082,1084,1089,1091]
 
-    for i in dir_list:
+    for i in crema_directory_list:
         part = i.split('_')
         if int(part[0]) in female:
             temp = 'female'
@@ -63,13 +72,163 @@ def get_data():
             emotion.append('neutral')
         else:
             emotion.append('unknown')
-        path.append(CREMA + i)
+        path.append('raw_data/wav_files/' + i)
 
-    CREMA_df = pd.DataFrame(emotion, columns = ['emotion'])
-    #CREMA_df['source'] = 'CREMA'
-    CREMA_df = pd.concat([CREMA_df,pd.DataFrame(gender, columns = ['gender'])],axis=1)
-    CREMA_df = pd.concat([CREMA_df,pd.DataFrame(path, columns = ['path'])],axis=1)
-    return df
+    crema_df = pd.DataFrame(emotion, columns = ['emotion'])
+    crema_df = pd.concat([crema_df,pd.DataFrame(gender, columns = ['gender'])],axis=1)
+    crema_df = pd.concat([crema_df,pd.DataFrame(path, columns = ['path'])],axis=1)
+    crema_df['source'] = 'crema'
+
+
+    #select tess folder from dataset
+    tess = bucket.list_blobs(prefix='raw_data/tess/')
+    tess_directory_list=[]
+
+    for file in tess:
+        file_name = file.name.split('tess/')
+        if '.wav' in file_name[1]:
+            tess_directory_list.append(file_name[1])
+
+    path = []
+    emotion = []
+
+    for i in tess_directory_list:
+        fname = ('raw_data/tess/' + i)
+        for f in fname:
+            if i == 'OAF_angry' or i == 'YAF_angry':
+                emotion.append('angry')
+            elif i == 'OAF_disgust' or i == 'YAF_disgust':
+                emotion.append('disgust')
+            elif i == 'OAF_Fear' or i == 'YAF_fear':
+                emotion.append('fear')
+            elif i == 'OAF_happy' or i == 'YAF_happy':
+                emotion.append('happy')
+            elif i == 'OAF_neutral' or i == 'YAF_neutral':
+                emotion.append('neutral')
+            elif i == 'OAF_Pleasant_surprise' or i == 'YAF_pleasant_surprised':
+                emotion.append('surprise')
+            elif i == 'OAF_Sad' or i == 'YAF_sad':
+                emotion.append('sad')
+            else:
+                emotion.append('Unknown')
+            path.append('raw_data/tess/' + i + "/" + f)
+
+    tess_df = pd.DataFrame(emotion, columns = ['emotion'])
+    tess_df['source'] = 'tess'
+    tess_df = pd.concat([tess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
+    tess_df['gender'] = 'female'
+
+
+    #select ravdess folder from dataset
+    ravdess = bucket.list_blobs(prefix='raw_data/ravdess/')
+    ravdess_directory_list=[]
+
+    for file in ravdess:
+        file_name = file.name.split('ravdess/')
+        if '.wav' in file_name[1]:
+            ravdess_directory_list.append(file_name[1])
+
+    # print(ravdess_directory_list[0:10])
+
+    emotion = []
+    gender = []
+    path = []
+    fname = []
+    for x in ravdess_directory_list:
+        fname.append('raw_data/ravdess/' + x)
+        # print(type(fname))
+        # print(fname)
+    for f in fname:
+        # print(f)
+        part = f.split('.')[0].split('-')
+        # print(part)
+        emotion.append(int(part[2]))
+        temp = int(part[6])
+        if temp%2 == 0:
+            temp = "female"
+        else:
+            temp = "male"
+        gender.append(temp)
+        path.append('raw_data/ravdess/' + x + '/' + f)
+
+    ravdess_df = pd.DataFrame(emotion)
+    ravdess_df = ravdess_df.replace({1:'neutral', 2:'neutral', 3:'happy', 4:'sad', 5:'angry', 6:'fear', 7:'disgust', 8:'surprise'})
+    ravdess_df = pd.concat([pd.DataFrame(gender),ravdess_df],axis=1)
+    ravdess_df.columns = ['gender','emotion']
+    ravdess_df['source'] = 'ravdess'
+    ravdess_df = pd.concat([ravdess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
+
+
+
+    savee = bucket.list_blobs(prefix='raw_data/savee/')
+    savee_directory_list=[]
+
+    for file in savee:
+        ravdess_directory_list.append(file.name)
+
+    emotion=[]
+    path = []
+    for i in savee_directory_list:
+        if i[-8:-6]=='_a':
+            emotion.append('angry')
+        elif i[-8:-6]=='_d':
+            emotion.append('disgust')
+        elif i[-8:-6]=='_f':
+            emotion.append('fear')
+        elif i[-8:-6]=='_h':
+            emotion.append('happy')
+        elif i[-8:-6]=='_n':
+            emotion.append('neutral')
+        elif i[-8:-6]=='sa':
+            emotion.append('sad')
+        elif i[-8:-6]=='su':
+            emotion.append('surprise')
+        else:
+            emotion.append('error')
+        path.append(savee + i)
+
+    # Now check out the label count distribution
+    savee_df = pd.DataFrame(emotion, columns = ['emotion'])
+    savee_df['source'] = 'savee'
+    savee_df = pd.concat([savee_df, pd.DataFrame(path, columns = ['path'])], axis = 1)
+    savee_df['gender'] = 'male'
+
+    # emodb = bucket.list_blobs(prefix='raw_data/emodb/')
+
+    def combo(df):
+        return f'{df[1]}_{df[0]}'
+
+    def sad(x):
+        return 1 if x.lower() == 'sad' else 0
+
+    def angry(x):
+        return 1 if x.lower() == 'angry' else 0
+
+    def disgust(x):
+        return 1 if x.lower() == 'disgust' else 0
+
+    def fear(x):
+        return 1 if x.lower() == 'fear' else 0
+
+    def happy(x):
+        return 1 if x.lower() == 'happy' else 0
+
+    def neutral(x):
+        return 1 if x.lower() == 'neutral' else 0
+
+    def pos_or_neg(x):
+        if x == 'happy':
+            return 'positive'
+        elif x == 'neutral':
+            return x
+        else:
+            return 'negative'
+
+    targets = pd.concat([crema_df,tess_df,ravdess_df,savee_df])
+    targets = targets[targets['emotion']!='surprise']
+
+    print(targets)
+    return targets
 
 
 if __name__ == '__main__':
