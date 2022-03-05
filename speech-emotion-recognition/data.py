@@ -150,7 +150,7 @@ def get_data():
         else:
             temp = "male"
         gender.append(temp)
-        path.append(x)
+        path.append('raw_data/ravdess/' + x)
 
     ravdess_df = pd.DataFrame(emotion)
     ravdess_df = ravdess_df.replace({1:'neutral', 2:'neutral', 3:'happy', 4:'sad', 5:'angry', 6:'fear', 7:'disgust', 8:'surprise'})
@@ -188,7 +188,7 @@ def get_data():
             emotion.append('surprise')
         else:
             emotion.append('error')
-        path.append(i)
+        path.append('raw_data/savee/' + i)
 
     # Now check out the label count distribution
     savee_df = pd.DataFrame(emotion, columns = ['emotion'])
