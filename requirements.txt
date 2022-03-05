@@ -46,3 +46,8 @@ sounddevice
 matplotlib
 seaborn
 plotly
+
+
+#transfer
+speechbrain
+pytorch
