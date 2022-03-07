@@ -36,21 +36,12 @@ termcolor
 librosa
 scipy #scipy.io.wavfile
 IPython #play audio files
-SoundFile
+soundFile
 wave
 sounddevice
 #pyaudio
-
 
 #data viz
 matplotlib
 seaborn
 plotly
-
-
-#transfer
-speechbrain
-pytorch
-
-#front_end
-streamlit

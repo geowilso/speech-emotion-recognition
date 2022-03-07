@@ -1,8 +1,10 @@
 from Speech-Emotion-Recognition.data import get_data, clean_data
-from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from Speech-Emotion-Recognition.extract_features import cut_or_pad, extract_features, targets
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras import layers
+from tensorflow.keras.optimizers import Adam
+from keras.callbacks import EarlyStopping
 
 
 class Trainer():
@@ -15,53 +17,74 @@ class Trainer():
         self.X = X
         self.y = y
 
-    def set_pipeline(self):
-        """defines the pipeline as a class attribute"""
-        dist_pipe = Pipeline([
-            ('dist_trans', DistanceTransformer()),
-            ('stdscaler', StandardScaler())
-        ])
-        time_pipe = Pipeline([
-            ('time_enc', TimeFeaturesEncoder('pickup_datetime')),
-            ('ohe', OneHotEncoder(handle_unknown='ignore'))
-        ])
-        preproc_pipe = ColumnTransformer([
-            ('distance', dist_pipe, [
-                "pickup_latitude",
-                "pickup_longitude",
-                'dropoff_latitude',
-                'dropoff_longitude'
-            ]),
-            ('time', time_pipe, ['pickup_datetime'])
-        ], remainder="drop")
+    def set_model(self, lr):
+        """defines the model as a class attribute"""
 
-        self.pipeline = Pipeline([
-            ('preproc', preproc_pipe),
-            ('linear_model', LinearRegression())
-        ])
+        self.model = Sequential()
+        self.model.add(layers.Masking(mask_value = -1000., input_shape=(self.X.shape[1], self.X.shape[2])))
+        self.model.add(layers.LSTM(128, return_sequences=True))
+        self.model.add(layers.LSTM(64))
+        self.model.add(layers.Dense(64, activation='relu'))
+        self.model.add(layers.Dropout(0.3))
+        self.model.add(layers.Dense(6, activation='softmax'))
+
+        optimiser = Adam(learning_rate=lr)
+
+        self.model.compile(loss='categorical_crossentropy',
+                      optimizer=optimiser,
+                      metrics='acc')
+
+        self.model.summary()
+
+        return self.model
 
     def run(self):
         """set and train the pipeline"""
-        self.set_pipeline()
-        self.pipeline.fit(self.X, self.y)
+
+        self.set_model(0.001)
+
+        es = EarlyStopping(patience=20,
+                           monitor='val_loss',
+                           restore_best_weights=True)
+
+        self.model.fit(self.X,
+                       self.y,
+                       callbacks=es,
+                       batch_size=32,
+                       epochs=100)
+
+    def save(self):
+        self.set_model(0.001)
+        self.run()
+        self.model.save('model')
 
     def evaluate(self, X_test, y_test):
-        """evaluates the pipeline on df_test and return the RMSE"""
-        y_pred = self.pipeline.predict(X_test)
-        rmse = compute_rmse(y_pred, y_test)
-        return round(rmse, 2)
+        """evaluates the model on test data"""
+        self.model.evaluate(X_test,y_test)
+
 
 
 if __name__ == "__main__":
-    N = 10_000
-    df = get_data(nrows=N)
-    df = clean_data(df)
-    y = df["fare_amount"]
-    X = df.drop("fare_amount", axis=1)
+    df = get_data()
+    #df = clean_data(df)
+
+    X = extract_features(df,
+                        sr=44100,
+                        length=250,
+                        offset=0.3,
+                        n_mfcc=13,
+                        poly_order=None,
+                        n_chroma=None,
+                        n_mels=None,
+                        zcr=False,
+                        rms=False)
+
+    y = targets(df)
+
     from sklearn.model_selection import train_test_split
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
-    trainer = Trainer(X_train, y_train)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
+
+    trainer = Trainer(X_train,y_train)
     trainer.run()
-    rmse = trainer.evaluate(X_test, y_test)
-    print(f"rmse: {rmse}")
+    trainer.evaluate()
