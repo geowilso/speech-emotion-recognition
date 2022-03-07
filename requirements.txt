@@ -51,3 +51,6 @@ plotly
 #transfer
 speechbrain
 pytorch
+
+#front_end
+streamlit
