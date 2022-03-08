@@ -79,7 +79,6 @@ def get_data():
     crema_df = pd.concat([crema_df,pd.DataFrame(path, columns = ['path'])],axis=1)
     crema_df['source'] = 'crema'
 
-
     #select tess folder from dataset
     tess = bucket.list_blobs(prefix='raw_data/tess/')
     tess_directory_list=[]
@@ -92,25 +91,24 @@ def get_data():
     emotion = []
     tessname = []
 
-    # print(tess_directory_list)
     for i in tess_directory_list:
         tessname.append('raw_data/tess/' + i)
-        # print(tessname)
+
     for f in tessname:
-        # print(i)
-        if 'OAF_angry' or 'YAF_angry' in f:
+        print(f)
+        if 'OAF_angry' in f or 'YAF_angry' in f:
             emotion.append('angry')
-        elif 'OAF_disgust' or 'YAF_disgust' in f:
+        elif 'OAF_disgust' in f or 'YAF_disgust' in f:
             emotion.append('disgust')
-        elif 'OAF_Fear' or 'YAF_fear' in f:
+        elif 'OAF_Fear' in f or 'YAF_fear' in f:
             emotion.append('fear')
-        elif 'OAF_happy' or 'YAF_happy' in f:
+        elif 'OAF_happy' in f or 'YAF_happy' in f:
             emotion.append('happy')
-        elif 'OAF_neutral' or 'YAF_neutral' in f:
+        elif 'OAF_neutral' in f or 'YAF_neutral' in f:
             emotion.append('neutral')
-        elif 'OAF_Pleasant_surprise' or 'YAF_pleasant_surprised' in f:
+        elif 'OAF_Pleasant_surprise' in f or 'YAF_pleasant_surprised' in f:
             emotion.append('surprise')
-        elif 'OAF_Sad' or 'YAF_sad' in f:
+        elif 'OAF_Sad' in f or 'YAF_sad' in f:
             emotion.append('sad')
         else:
             emotion.append('Unknown')
@@ -120,7 +118,7 @@ def get_data():
     tess_df['source'] = 'tess'
     tess_df = pd.concat([tess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
     tess_df['gender'] = 'female'
-    # print(tess_df)
+
 
     #select ravdess folder from dataset
     ravdess = bucket.list_blobs(prefix='raw_data/ravdess/')
@@ -131,8 +129,6 @@ def get_data():
         if '.wav' in file_name[1]:
             ravdess_directory_list.append(file_name[1])
 
-    # print(ravdess_directory_list[0:10])
-
     emotion = []
     gender = []
     path = []
@@ -140,9 +136,7 @@ def get_data():
     for x in ravdess_directory_list:
         fname.append('raw_data/ravdess/' + x)
     for f in fname:
-        # print(f)
         part = f.split('.')[0].split('-')
-        # print(part)
         emotion.append(int(part[2]))
         temp = int(part[6])
         if temp%2 == 0:
@@ -158,7 +152,7 @@ def get_data():
     ravdess_df.columns = ['gender','emotion']
     ravdess_df['source'] = 'ravdess'
     ravdess_df = pd.concat([ravdess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
-
+    print(ravdess_df.emotion.value_counts())
 
 
     savee = bucket.list_blobs(prefix='raw_data/savee/')
@@ -198,61 +192,16 @@ def get_data():
 
     # emodb = bucket.list_blobs(prefix='raw_data/emodb/')
 
-    def combo(df):
-        return f'{df[1]}_{df[0]}'
-
-    def sad(x):
-        return 1 if x.lower() == 'sad' else 0
-
-    def angry(x):
-        return 1 if x.lower() == 'angry' else 0
-
-    def disgust(x):
-        return 1 if x.lower() == 'disgust' else 0
-
-    def fear(x):
-        return 1 if x.lower() == 'fear' else 0
-
-    def happy(x):
-        return 1 if x.lower() == 'happy' else 0
-
-    def neutral(x):
-        return 1 if x.lower() == 'neutral' else 0
-
-    def pos_or_neg(x):
-        if x == 'happy':
-            return 'positive'
-        elif x == 'neutral':
-            return x
-        else:
-            return 'negative'
-
     targets = pd.concat([crema_df,tess_df,ravdess_df,savee_df])
-    # print(len(targets))
-    # print(targets.info())
-
-    # targets = targets.drop(targets[targets.emotion=='surprise'].index)
-    # targets = targets.drop(targets[targets.emotion == 'fear'].index)
-    # targets = targets.drop(targets[targets.emotion == 'disgust'].index)
-
     targets = targets[targets['emotion']!='surprise']
     targets = targets[targets['emotion']!='fear']
     targets = targets[targets['emotion']!='disgust']
-    # print(len(targets))
-    # print(targets.info())
-    # targets.drop_duplicates(inplace=True)
-    # print(targets.loc[targets.duplicated(), :])
-    # print(targets.duplicated().sum())
-    # print(targets.nunique())
-    # print(targets['emotion'].unique())
-    # print(savee_df.shape)
-    print(ravdess_df['path'][0])
-    # print(crema_df.shape)
-    # print(tess_df.shape)
-    # print(targets.shape)
-    print(targets)
+
     return targets
 
 
 if __name__ == '__main__':
     df = get_data()
+    print(df.shape)
+    print(df.emotion.value_counts())
+    print(df.source.value_counts())
