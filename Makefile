@@ -56,9 +56,12 @@ pypi:
 
 
 #GCP
-
 gcp_submit_training:
     @gcloud ai-platform jobs submit training ${JOB_NAME} \
     ... \
     --scale-tier CUSTOM \
     --master-machine-type n1-standard-16
+
+streamlit:
+	-@streamlit run speech-emotion-recognition/front_end.py
+

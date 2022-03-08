@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import os
 import sys
+import sounddevice as sd
+import soundfile as sf
 
 # librosa is a Python library for analyzing audio and music. It can be used to extract the data from the audio files we will see it later.
 import librosa
@@ -13,6 +15,10 @@ import matplotlib.pyplot as plt
 # to play the audio files
 from IPython.display import Audio
 import warnings
+from tensorflow.keras.models import load_model
+
+# model
+from predict import record, processing, model_predict
 
 #PAGE CONFIG
 st.set_page_config(
@@ -28,23 +34,30 @@ st.markdown("<h1 style='text-align: center; color: darkred;'>Record Your Emotion
 
 #RECORD BUTTON
 if st.button('Record', help='record your emotions'): #NO WAY TO CENTER THE BUTTON with Sreamlit, we could try with CSS
-     st.write('Work in development 🚧') 
+    sound=record()
+
+
 
 #UPLOAD BUTTON
-uploaded_file = st.file_uploader("Choose a file") 
+uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
      bytes_data = uploaded_file.getvalue()
      st.write(bytes_data)
 
+
+
+# load model
+model = load_model("../models/speech_emotion_model_0.h5")
+
 #TRYING TO PRINT A SOUND SIGNAL
-CREMA = '../raw_data/wav_files/'
-dir_list = os.listdir(CREMA)
-#st.write(dir_list[0:10])
-file_name = CREMA + '1091_IWW_SAD_XX.wav'
-audio_file = open(file_name, 'rb')
-audio_bytes = audio_file.read()
-st.write("This is your audio")
-st.audio(audio_bytes, format='audio/ogg')
+# CREMA = '../raw_data/wav_files/'
+# dir_list = os.listdir(CREMA)
+# st.write(dir_list[0:10])
+# file_name = CREMA + '1015_IEO_HAP_HI.wav'
+# audio_file = open(file_name, 'rb')
+# audio_bytes = audio_file.read()
+# st.write("This is your audio")
+# st.audio(audio_bytes, format='audio/ogg')
 
 
 col1, col2, col3 = st.columns(3)
