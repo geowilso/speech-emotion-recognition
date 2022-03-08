@@ -74,7 +74,7 @@ class Trainer(object):
     def save(self):
         self.set_model(0.001)
         self.run()
-        self.model.save('/models/model.h5')
+        self.model.save('model.h5')
 
     def evaluate(self, X_test, y_test):
         """evaluates the model on test data"""
@@ -85,11 +85,11 @@ class Trainer(object):
         client = storage.Client()
         bucket = client.bucket(BUCKET_NAME)
         blob = bucket.blob(STORAGE_LOCATION)
-        blob.upload_from_filename('model.joblib')
+        blob.upload_from_filename('model.h5')
 
     def save_model(self):
         """Save the model into a .joblib format"""
-        model.save('/models/full_model.h5')
+        model.save('model.h5')
         self.upload_model_to_gcp()
 
     # MLFlow methods
