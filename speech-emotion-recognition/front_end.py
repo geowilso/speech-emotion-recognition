@@ -39,8 +39,8 @@ if uploaded_file is not None:
 #TRYING TO PRINT A SOUND SIGNAL
 CREMA = '../raw_data/wav_files/'
 dir_list = os.listdir(CREMA)
-#st.write(dir_list[0:10])
-file_name = CREMA + '1091_IWW_SAD_XX.wav'
+st.write(dir_list[0:10])
+file_name = CREMA + '1015_IEO_HAP_HI.wav'
 audio_file = open(file_name, 'rb')
 audio_bytes = audio_file.read()
 st.write("This is your audio")
