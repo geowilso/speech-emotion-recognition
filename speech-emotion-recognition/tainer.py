@@ -1,5 +1,5 @@
 from Speech-Emotion-Recognition.data import get_data, clean_data
-from Speech-Emotion-Recognition.extract_features import cut_or_pad, extract_features, targets
+from Speech-Emotion-Recognition.extract_features import cut_or_pad, extract_mfcc, targets
 
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -80,11 +80,6 @@ class Trainer(object):
         """evaluates the model on test data"""
         self.model.evaluate(X_test,y_test)
 
-    def save_model(self):
-        """Save the model into a .joblib format"""
-        joblib.dump(self.pipeline, 'model.joblib')
-        print(colored("model.joblib saved locally", "green"))
-        self.upload_model_to_gcp()
 
     def upload_model_to_gcp(self):
         client = storage.Client()
@@ -92,6 +87,10 @@ class Trainer(object):
         blob = bucket.blob(STORAGE_LOCATION)
         blob.upload_from_filename('model.joblib')
 
+    def save_model(self):
+        """Save the model into a .joblib format"""
+        model.save('/models/full_model.h5')
+        self.upload_model_to_gcp()
 
     # MLFlow methods
     @memoized_property
@@ -121,9 +120,8 @@ class Trainer(object):
 
 if __name__ == "__main__":
     df = get_data()
-    #df = clean_data(df)
 
-    X = extract_features(df,
+    X = extract_mfcc(df,
                         sr=44100,
                         length=250,
                         offset=0.3,
