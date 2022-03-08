@@ -5,7 +5,8 @@ import pandas as pd
 import os
 import sys
 import sounddevice as sd
-import soundfile as sf
+import time
+# import soundfile as sf
 
 # librosa is a Python library for analyzing audio and music. It can be used to extract the data from the audio files we will see it later.
 import librosa
@@ -18,7 +19,7 @@ import warnings
 from tensorflow.keras.models import load_model
 
 # model
-from predict import record, processing, model_predict
+from predict import record, processing, model_predict, playback
 
 #PAGE CONFIG
 st.set_page_config(
@@ -33,21 +34,32 @@ st.markdown("<h1 style='text-align: center; color: darkred;'>Record Your Emotion
 
 
 #RECORD BUTTON
-if st.button('Record', help='record your emotions'): #NO WAY TO CENTER THE BUTTON with Sreamlit, we could try with CSS
-    sound=record()
+sound = np.empty
+if st.button('Record', help='record your emotions'):
+    with st.spinner('Recording for 3 seconds ....'):
+        sound = record()
+        time.sleep(5)
+    if sound.any():
+        st.success("Recording completed")
+
+
+#PLAYBACK BUTTON
+if st.button('Play Recording', help='playback your audio'):
+    print(sound)
+    playback(sound)
 
 
 
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-     bytes_data = uploaded_file.getvalue()
-     st.write(bytes_data)
+    bytes_data = uploaded_file.getvalue()
+    st.write(bytes_data)
 
 
 
 # load model
-model = load_model("../models/speech_emotion_model_0.h5")
+# model = load_model("../models/speech_emotion_model_0.h5")
 
 #TRYING TO PRINT A SOUND SIGNAL
 # CREMA = '../raw_data/wav_files/'
