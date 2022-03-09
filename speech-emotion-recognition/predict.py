@@ -8,10 +8,10 @@ def record():
     fs = 44100
     duration = 3  # seconds
     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-    sound = myrecording.reshape(len(myrecording))
-    return sound
+    return myrecording
 
-def processing(sound):
+def processing(myrecording):
+    sound = myrecording.reshape(len(myrecording))
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
