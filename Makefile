@@ -63,7 +63,7 @@ streamlit:
 
 JOB_NAME=speech_emotion_recognition_model_$(shell date +'%Y%m%d_%H%M%S')
 
-PACKAGE_NAME=SpeechEmotionModel
+PACKAGE_NAME=speech-emotion-recognition
 FILENAME=trainer
 
 REGION=europe-west1
