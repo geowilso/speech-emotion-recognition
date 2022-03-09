@@ -95,7 +95,6 @@ def get_data():
         tessname.append('raw_data/tess/' + i)
 
     for f in tessname:
-        print(f)
         if 'OAF_angry' in f or 'YAF_angry' in f:
             emotion.append('angry')
         elif 'OAF_disgust' in f or 'YAF_disgust' in f:
@@ -152,7 +151,6 @@ def get_data():
     ravdess_df.columns = ['gender','emotion']
     ravdess_df['source'] = 'ravdess'
     ravdess_df = pd.concat([ravdess_df,pd.DataFrame(path, columns = ['path'])],axis=1)
-    print(ravdess_df.emotion.value_counts())
 
 
     savee = bucket.list_blobs(prefix='raw_data/savee/')
@@ -196,12 +194,10 @@ def get_data():
     targets = targets[targets['emotion']!='surprise']
     targets = targets[targets['emotion']!='fear']
     targets = targets[targets['emotion']!='disgust']
-
+    targets = targets.reset_index().drop(['index'], axis=1)
     return targets
 
 
 if __name__ == '__main__':
     df = get_data()
     print(df.shape)
-    print(df.emotion.value_counts())
-    print(df.source.value_counts())

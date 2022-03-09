@@ -47,7 +47,7 @@ if uploaded_file is not None:
 
 
 # load model
-model = load_model("../models/speech_emotion_model_0.h5")
+model = load_model("/models/speech_emotion_model_0.h5")
 
 #TRYING TO PRINT A SOUND SIGNAL
 # CREMA = '../raw_data/wav_files/'

@@ -1,5 +1,5 @@
-from Speech-Emotion-Recognition.data import get_data, clean_data
-from Speech-Emotion-Recognition.extract_features import cut_or_pad, extract_mfcc, targets
+from data import get_data #, clean_data
+from extract_features import cut_or_pad, extract_mfcc
 
 import mlflow
 from mlflow.tracking import MlflowClient
@@ -12,12 +12,13 @@ from tensorflow.keras import layers
 from tensorflow.keras.optimizers import Adam
 from keras.callbacks import EarlyStopping
 
+from sklearn.model_selection import train_test_split
+
 from params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
 
 MLFLOW_URI = "https://mlflow.lewagon.co/"
 EXPERIMENT_NAME = "[UK][London][geowilso]speech_emotion_recognition_0"
 STORAGE_LOCATION = '/models/'
-
 
 class Trainer(object):
 
@@ -56,7 +57,7 @@ class Trainer(object):
         '''defines the experiment name for MLFlow'''
         self.experiment_name = experiment_name
 
-    def run(self):
+    def run(self, X_val, y_val):
         """set and train the pipeline"""
 
         self.set_model(0.001)
@@ -71,14 +72,9 @@ class Trainer(object):
                        batch_size=32,
                        epochs=50)
 
-    def save(self):
-        self.set_model(0.001)
-        self.run()
-        self.model.save('model.h5')
-
     def evaluate(self, X_test, y_test):
         """evaluates the model on test data"""
-        self.model.evaluate(X_test,y_test)
+        return self.model.evaluate(X_test, y_test)
 
 
     def upload_model_to_gcp(self):
@@ -88,8 +84,7 @@ class Trainer(object):
         blob.upload_from_filename('model.h5')
 
     def save_model(self):
-        """Save the model into a .joblib format"""
-        model.save('model.h5')
+        self.model.save('model.h5')
         self.upload_model_to_gcp()
 
     # MLFlow methods
@@ -117,27 +112,15 @@ class Trainer(object):
     def mlflow_log_metric(self, key, value):
         self.mlflow_client.log_metric(self.mlflow_run.info.run_id, key, value)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     df = get_data()
+    X, y = extract_mfcc(df, n_mfcc=13, n_fft=2048, hop_length=512, sr=44100)
+    y, le = targets(df)
 
-    X = extract_mfcc(df,
-                        sr=44100,
-                        length=250,
-                        offset=0.3,
-                        n_mfcc=13,
-                        poly_order=None,
-                        n_chroma=None,
-                        n_mels=None,
-                        zcr=False,
-                        rms=False)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
 
-    y = targets(df)
-
-    from sklearn.model_selection import train_test_split
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.15)
-
-    trainer = Trainer(X_train,y_train)
-    trainer.run()
-    trainer.evaluate()
+    trainer = Trainer(X=X_train, y=y_train)
+    trainer.set_experiment_name('speech_emotion_model_1')
+    trainer.run(X_test, y_test)
+    trainer.evaluate(X_test, y_test)
+    trainer.save_model()
