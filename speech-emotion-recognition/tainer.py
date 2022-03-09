@@ -114,13 +114,21 @@ class Trainer(object):
 
 if __name__ == '__main__':
     df = get_data()
-    X, y = extract_mfcc(df, n_mfcc=13, n_fft=2048, hop_length=512, sr=44100)
-    y, le = targets(df)
+    X, y, le = extract_mfcc(df, n_mfcc=13, n_fft=2048, hop_length=512, sr=44100)
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+    #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
+    #trainer = Trainer(X=X_train, y=y_train)
+    #trainer.set_experiment_name('speech_emotion_model_1')
+    #trainer.run(X_test, y_test)
+    #trainer.evaluate(X_test, y_test)
+    #trainer.save_model()
+
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.70)
+    X_train, X_test, y_train, y_test = train_test_split(X_train,
+                                                        y_train,
+                                                        test_size=0.2)
 
     trainer = Trainer(X=X_train, y=y_train)
-    trainer.set_experiment_name('speech_emotion_model_1')
     trainer.run(X_test, y_test)
     trainer.evaluate(X_test, y_test)
-    trainer.save_model()
