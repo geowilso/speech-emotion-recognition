@@ -2,7 +2,8 @@ from unittest import result
 import sounddevice as sd
 import soundfile as sf
 import librosa
-import numpy
+import numpy as np
+import pandas as pd
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
@@ -18,30 +19,37 @@ def playback(myrecording):
     sd.stop()
 
 
-def processing(myrecording):
-    sound = myrecording.reshape(len(myrecording))
+def processing(uploaded_file):
+
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
     sr = 44100
-    mfcc = librosa.feature.mfcc(sound,
+
+    wav = librosa.load(uploaded_file, sr=sr)
+
+    mfcc = librosa.feature.mfcc(wav[0],
                                 sr=sr,
                                 n_mfcc=n_mfcc,
                                 n_fft=n_fft,
                                 hop_length=hop_length)
-    mfcc = mfcc.T
-    mfcc.shape
-    mfcc_T = mfcc.T
-    mfcc_pad = pad_sequences(mfcc_T,
-                            maxlen=615,
-                            dtype='float32',
-                            padding='post',
-                            value=-1000.)
+
+    mfcc_pad = pad_sequences(mfcc,
+                             maxlen=615,
+                             dtype='float32',
+                             padding='post',
+                             value=-1000.)
+
     mfcc_pad_T = mfcc_pad.T
     mfcc_pad_T_reshape = mfcc_pad_T.reshape(1, 615, 13)
     return mfcc_pad_T_reshape
 
 def model_predict(mfcc_pad_T_reshape):
-    model = load_model("../models/speech_emotion_model_0.h5")
-    results= model.predict(mfcc_pad_T_reshape)
-    return results
+    model = load_model("models/speech_emotion_model_0.h5")
+    results = model.predict(mfcc_pad_T_reshape)
+    index = results.argmax(axis=1)
+    emotions = ['Angry', 'Happy', 'Neutral', 'Sad']
+    df = pd.DataFrame(results.T,columns=['result'])
+    df['emotion'] = emotions
+    df = df.sort_values(by='result', ascending=False)
+    return df

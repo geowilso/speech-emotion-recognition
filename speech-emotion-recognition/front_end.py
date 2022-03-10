@@ -17,13 +17,14 @@ import matplotlib.pyplot as plt
 from IPython.display import Audio
 import warnings
 from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # model
 from predict import record, processing, model_predict, playback
 
 #PAGE CONFIG
 st.set_page_config(
-     page_title="Record Your Emotions",
+     page_title="Upload Your Emotions",
      page_icon="🎥",
      layout="wide",
      initial_sidebar_state="expanded",
@@ -33,34 +34,40 @@ st.set_page_config(
 st.markdown("<h1 style='text-align: center; color: darkred;'>Record Your Emotions</h1>", unsafe_allow_html=True )
 
 
-#RECORD BUTTON
-sound = np.empty
-if st.button('Record', help='record your emotions'):
-    with st.spinner('Recording for 3 seconds ....'):
-        sound = record()
-        time.sleep(5)
-    if sound.any():
-        st.success("Recording completed")
+# #RECORD BUTTON
+# sound = np.empty
+# if st.button('Record', help='record your emotions'):
+#     with st.spinner('Recording for 3 seconds ....'):
+#         sound = record()
+#         time.sleep(5)
+#     if sound.any():
+#         st.success("Recording completed")
 
 
-#PLAYBACK BUTTON
-if st.button('Play Recording', help='playback your audio'):
-    print(sound)
-    playback(sound)
+# #PLAYBACK BUTTON
+# if st.button('Play Recording', help='playback your audio'):
+#     print(sound)
+#     playback(sound)
 
 
 
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-    bytes_data = uploaded_file.getvalue()
-    st.write(bytes_data)
+
+    X = processing(uploaded_file)
+
+    # st.text(wav[0].shape)
+    # st.text(mfcc.shape)
+    # st.text(mfcc_pad.shape)
+    # st.text(mfcc_pad_T.shape)
+
+    pred = model_predict(X)
 
 
 
-# load model
-model = load_model("/models/speech_emotion_model_0.h5")
 
+    st.text(pred)
 
 #TRYING TO PRINT A SOUND SIGNAL
 # CREMA = '../raw_data/wav_files/'
