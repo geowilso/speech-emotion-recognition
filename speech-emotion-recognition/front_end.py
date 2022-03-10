@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import os
 import sys
-import sounddevice as sd
 import time
 # import soundfile as sf
 
