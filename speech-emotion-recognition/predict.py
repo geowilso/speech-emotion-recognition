@@ -1,5 +1,4 @@
 from unittest import result
-import sounddevice as sd
 import soundfile as sf
 import librosa
 import numpy as np
