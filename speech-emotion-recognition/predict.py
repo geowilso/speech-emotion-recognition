@@ -3,12 +3,20 @@ import sounddevice as sd
 import soundfile as sf
 import librosa
 import numpy
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 def record():
     fs = 44100
     duration = 3  # seconds
     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+    print(type(myrecording))
     return myrecording
+
+def playback(myrecording):
+    sd.play(myrecording, 44100)
+    sd.stop()
+
 
 def processing(myrecording):
     sound = myrecording.reshape(len(myrecording))
@@ -34,6 +42,6 @@ def processing(myrecording):
     return mfcc_pad_T_reshape
 
 def model_predict(mfcc_pad_T_reshape):
-    model = model_load("../models/speech_emotion_model_0.h5")
+    model = load_model("../models/speech_emotion_model_0.h5")
     results= model.predict(mfcc_pad_T_reshape)
     return results
