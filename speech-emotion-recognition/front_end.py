@@ -21,6 +21,8 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # model
 from predict import record, processing, model_predict, playback
+from graphs import draw_mel
+
 
 #PAGE CONFIG
 st.set_page_config(
@@ -31,7 +33,7 @@ st.set_page_config(
  )
 
 #TITLE
-st.markdown("<h1 style='text-align: center; color: darkred;'>Record Your Emotions</h1>", unsafe_allow_html=True )
+st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emotions</h1>", unsafe_allow_html=True )
 
 
 # #RECORD BUTTON
@@ -64,31 +66,34 @@ if uploaded_file is not None:
 
     pred = model_predict(X)
 
+    size = pred['result'][0] * 100
+    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][0]}; font-size: {size}px;'>{pred['emotion'][0]} {pred['percent'][0]}</p>"
+    st.markdown(result_text, unsafe_allow_html=True)
+
+    size = pred['result'][1] * 100
+    if size < 30:
+        size = 30
+    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][1]}; font-size: {size}px;'>{pred['emotion'][1]} {pred['percent'][1]}</p>"
+    st.markdown(result_text, unsafe_allow_html=True)
+
+    size = pred['result'][2] * 100
+    if size < 20:
+        size = 20
+    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][2]}; font-size: {size}px;'>{pred['emotion'][2]} {pred['percent'][2]}</p>"
+    st.markdown(result_text, unsafe_allow_html=True)
+
+    size = pred['result'][3] * 100
+    if size < 10:
+        size = 15
+    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][3]}; font-size: {size}px;'>{pred['emotion'][3]} {pred['percent'][3]}</p>"
+    st.markdown(result_text, unsafe_allow_html=True)
+
+    #plot = draw_mel(uploaded_file)
+
+    #st.pyplot(plot)
 
 
-
-    st.text(pred)
-
-#TRYING TO PRINT A SOUND SIGNAL
-# CREMA = '../raw_data/wav_files/'
-# dir_list = os.listdir(CREMA)
-# st.write(dir_list[0:10])
-# file_name = CREMA + '1015_IEO_HAP_HI.wav'
-# audio_file = open(file_name, 'rb')
-# audio_bytes = audio_file.read()
-# st.write("This is your audio")
-# st.audio(audio_bytes, format='audio/ogg')
-
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.header("A MEL_SPECTOGRAM")
-    st.markdown("![Alt Text](https://media.giphy.com/media/vybWlRniCXzZC/giphy.gif)")
-
-with col2:
-    st.header("A MAIN EMOTION")
-    st.image("https://static.streamlit.io/examples/dog.jpg")
-
-with col3:
-    st.header("DETAILED EMOTIONS")
-    st.image("https://static.streamlit.io/examples/owl.jpg")
+# col1, col2, col3 = st.columns(3)
+# with col1:
+#     st.header("A MEL_SPECTOGRAM")
+#     st.markdown("![Alt Text](https://media.giphy.com/media/vybWlRniCXzZC/giphy.gif)")

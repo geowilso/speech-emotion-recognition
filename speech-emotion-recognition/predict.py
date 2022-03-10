@@ -49,7 +49,11 @@ def model_predict(mfcc_pad_T_reshape):
     results = model.predict(mfcc_pad_T_reshape)
     index = results.argmax(axis=1)
     emotions = ['Angry', 'Happy', 'Neutral', 'Sad']
+    colours = ['#a81919', '#ffcb3b', '#9c9c9c', '#407eb8']
     df = pd.DataFrame(results.T,columns=['result'])
     df['emotion'] = emotions
+    df['colour'] = colours
+    df['percent'] = df['result'].apply(lambda x: str(round(x*100,1))+'%')
     df = df.sort_values(by='result', ascending=False)
+    df = df.reset_index()
     return df
