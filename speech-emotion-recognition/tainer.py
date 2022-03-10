@@ -1,5 +1,5 @@
 from data import get_data #, clean_data
-from extract_features import cut_or_pad, extract_mfcc
+from extract_features import extract_mfcc
 
 import mlflow
 from mlflow.tracking import MlflowClient
