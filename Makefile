@@ -54,5 +54,33 @@ pypi_test:
 pypi:
 	@twine upload dist/* -u $(PYPI_USERNAME)
 
+#streamlit
 streamlit:
 	-@streamlit run speech-emotion-recognition/front_end.py
+
+
+#GCP
+
+JOB_NAME=speech_emotion_recognition_model_$(shell date +'%Y%m%d_%H%M%S')
+
+PACKAGE_NAME=speech-emotion-recognition
+FILENAME=trainer
+
+REGION=europe-west1
+
+PYTHON_VERSION=3.7
+RUNTIME_VERSION=1.15
+
+BUCKET_NAME=batch-753-london_speech_emotion_recognition_data
+
+BUCKET_TRAINING_FOLDER = 'trainings'
+
+gcp_submit_training:
+	gcloud ai-platform jobs submit training ${JOB_NAME} \
+		--job-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER} \
+		--package-path ${PACKAGE_NAME} \
+		--module-name ${PACKAGE_NAME}.${FILENAME} \
+		--python-version=${PYTHON_VERSION} \
+		--runtime-version=${RUNTIME_VERSION} \
+		--region ${REGION} \
+		--stream-logs

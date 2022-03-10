@@ -20,69 +20,43 @@ import librosa
 
 warnings.filterwarnings("ignore")
 
-def cut_or_pad(array, n):
-    if array.shape[1] < n:
-        return pad_sequences(array,n,padding='post',value=-1000.)
-    elif array.shape[1] > n:
-        return array[:,:n]
-    else:
-        return array
-
-
 def extract_mfcc(df,
                  n_mfcc=13,
                  n_fft=2048,
                  hop_length=512,
                  sr = 44100):
 
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+
     y = []
     X = []
 
     for i in tqdm(range(len(df))):
-      y.append(df['emotion'][i])
-      wav = librosa.load(df['path'][i], sr=sr)
-      mfcc = librosa.feature.mfcc(wav[0], sr=sr, n_mfcc=n_mfcc, n_fft=n_fft, hop_length=hop_length)
-      mfcc = mfcc.T
-      X.append(np.asarray(mfcc))
+        y.append(df['emotion'][i])
+
+        file = bucket.blob(df['path'][i])
+        file_as_string = file.download_as_string()
+        wav = sf.read(io.BytesIO(file_as_string))
+        mfcc = librosa.feature.mfcc(wav[0], sr=sr, n_mfcc=n_mfcc, n_fft=n_fft, hop_length=hop_length)
+        mfcc = mfcc.T
+        X.append(np.asarray(mfcc))
 
     X = np.asarray(X)
+    X_pad = pad_sequences(X, dtype='float32', padding='post', value=-1000.)
+
     y = np.asarray(y)
-
-    return X,y
-
-def targets(df):
-    y = df['emotion']
     le = LabelEncoder()
     y_num = le.fit_transform(y)
     y_cat = to_categorical(y_num)
 
-    return y_cat
-
-# def Xy_split(df,array):
-#     y = df['emotion']
-#     le = LabelEncoder()
-#     y_num = le.fit_transform(y)
-#     y_cat = to_categorical(y_num)
-
-#     X_train, X_test, y_train, y_test = train_test_split(array, y_cat, test_size=0.15)
-#     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.15)
-
-#     return X_train, X_test, X_val, y_train, y_test, y_val
-
+    return X_pad, y_cat, le
 
 if __name__ == '__main__':
     df = get_data()
-    print(df.head())
+
     print(df.shape)
-    X = extract_features(df,
-                        sr=44100,
-                        length=250,
-                        offset=0.3,
-                        n_mfcc=13,
-                        poly_order=None,
-                        n_chroma=None,
-                        n_mels=None,
-                        zcr=False,
-                        rms=False)
+
+    X, y, le = extract_mfcc(df, n_mfcc=13, n_fft=2048, hop_length=512, sr=44100)
     print(X.shape)
-    X.save
+    print(le.classes_)
