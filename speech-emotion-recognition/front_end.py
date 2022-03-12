@@ -5,7 +5,8 @@ import pandas as pd
 import os
 import sys
 import time
-# import soundfile as sf
+import soundfile as sf
+
 
 # librosa is a Python library for analyzing audio and music. It can be used to extract the data from the audio files we will see it later.
 import librosa
@@ -21,7 +22,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 # model
 from predict import record, processing, model_predict, playback
 from graphs import draw_mel
-
+from helper import read_audio, record, save_record
 
 #PAGE CONFIG
 st.set_page_config(
@@ -51,6 +52,28 @@ st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emoti
 #     playback(sound)
 
 
+"# Streamlit showcase"
+
+st.header("1. Record your own voice")
+
+filename = st.text_input("Choose a filename: ")
+
+if st.button(f"Click to Record"):
+    if filename == "":
+        st.warning("Choose a filename.")
+    else:
+        record_state = st.text("Recording...")
+        duration = 5  # seconds
+        fs = 48000
+        myrecording = record(duration, fs)
+        record_state.text(f"Saving sample as {filename}.mp3")
+
+        path_myrecording = f"./samples/{filename}.mp3"
+
+        save_record(path_myrecording, myrecording, fs)
+        record_state.text(f"Done! Saved sample as {filename}.mp3")
+
+        st.audio(read_audio(path_myrecording))
 
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")

@@ -40,7 +40,7 @@ soundFile
 wave
 sounddevice
 #pyaudio
-
+wavio
 #data viz
 matplotlib
 seaborn
