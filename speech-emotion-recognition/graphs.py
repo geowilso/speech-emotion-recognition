@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 
 import librosa
@@ -24,3 +25,6 @@ def plot_chunks(file):
     for chunk in chunks:
         chunk_pred = model_predict(chunk)
         chunk_preds.append(chunk_pred)
+    array = np.array(chunk_preds)
+    df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
+    return df

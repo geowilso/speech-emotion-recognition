@@ -1,6 +1,7 @@
 # IMPORTS
 import streamlit as st
 import numpy as np
+
 import pandas as pd
 import os
 import sys
@@ -12,7 +13,7 @@ import sounddevice as sd
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
-
+# trial
 # to play the audio files
 from IPython.display import Audio
 import warnings
@@ -54,7 +55,6 @@ st.text(len(sd.query_devices()))
 
 st.header("1. Record your own voice")
 
-filename = st.text_input("Choose a filename: ")
 
 if st.button(f"Click to Record"):
     if filename == "":
@@ -77,6 +77,7 @@ st.header("2. Upload an existing file")
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
+
     X = processing(uploaded_file)
 
     # st.text(wav[0].shape)
