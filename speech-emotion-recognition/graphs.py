@@ -8,8 +8,8 @@ from predict import chunks, model_predict, processing
 
 def draw_mel(uploaded_file):
 
-    wav = processing(uploaded_file)
-    d = librosa.stft(wav[0])  # STFT of y
+    mfcc_pad_T_reshape, wav = processing(uploaded_file)
+    d = librosa.stft(wav)  # STFT of y
     S_db = librosa.amplitude_to_db(np.abs(d), ref=np.max)
 
     fig, ax = plt.subplots()

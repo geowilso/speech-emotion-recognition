@@ -41,7 +41,7 @@ def processing(uploaded_file):
 
     mfcc_pad_T = mfcc_pad.T
     mfcc_pad_T_reshape = mfcc_pad_T.reshape(1, 615, 13)
-    return mfcc_pad_T_reshape, wav
+    return mfcc_pad_T_reshape
 
 
 def chunks(uploaded_file):
