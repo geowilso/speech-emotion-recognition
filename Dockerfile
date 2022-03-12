@@ -4,6 +4,8 @@ COPY speech-emotion-recognition /speech-emotion-recognition
 COPY models/speech_emotion_model_0.h5 models/speech_emotion_model_0.h5
 COPY requirements.txt /requirements.txt
 
+RUN pip install --upgrade pip
+
 RUN pip install -r requirements.txt
 
-CMD streamlit run front_end.py
+CMD streamlit run /speech-emotion-recognition/front_end.py

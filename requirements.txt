@@ -3,30 +3,30 @@ pip>=9
 setuptools>=26
 twine
 wheel>=0.29
-jupyter
+#jupyter
 
 # data science
-numpy.1.18.5
+numpy==1.18.5
 pandas
-scikit-learn
-tensorflow
+#scikit-learn
+tensorflow==2.5
 
 # tests/linter
-coverage
-flake8
-pytest
-yapf
+#coverage
+#flake8
+#pytest
+#yapf
 
 # API
-gcsfs
-google-cloud-storage
-mlflow
-s3fs
+#gcsfs
+#google-cloud-storage
+#mlflow
+#s3fs
 
 # utilities
-six>=1.14
-memoized-property
-termcolor
+#six>=1.14
+#memoized-property
+#termcolor
 
 # WAV file packages
 librosa
@@ -35,7 +35,7 @@ IPython #play audio files
 soundFile
 wave
 sounddevice
-#pyaudio
+
 
 
 #data viz
