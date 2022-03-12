@@ -1,6 +1,10 @@
+build-essential
+libgtk-3-dev
+libboost-all-dev
 freeglut3-dev
-libgtk2.0-dev
-libasound2-dev
+cmake
+libopenblas-dev
 libsndfile1-dev
 ffmpeg
-sounddevice
+libasound2-dev
+libportaudio2

@@ -10,7 +10,7 @@ def read_audio(file):
     return audio_bytes
 
 
-def record(duration=5, fs=48000):
+def record(duration, fs):
     sd.default.samplerate = fs
     sd.default.channels = 1
     myrecording = sd.rec(int(duration * fs))
