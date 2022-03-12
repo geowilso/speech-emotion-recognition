@@ -18,6 +18,13 @@ def playback(myrecording):
     sd.stop()
 
 
+def load(uploaded_file):
+    sr = 44100
+
+    wav = librosa.load(uploaded_file, sr=sr)
+    return wav
+
+
 def processing(uploaded_file):
 
     n_mfcc = 13
@@ -41,7 +48,7 @@ def processing(uploaded_file):
 
     mfcc_pad_T = mfcc_pad.T
     mfcc_pad_T_reshape = mfcc_pad_T.reshape(1, 615, 13)
-    return mfcc_pad_T_reshape, wav
+    return mfcc_pad_T_reshape
 
 
 def chunks(uploaded_file):
