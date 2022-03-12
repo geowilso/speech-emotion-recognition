@@ -6,7 +6,7 @@ import os
 import sys
 import time
 #import soundfile as sf
-
+import sounddevice as sd
 
 # librosa is a Python library for analyzing audio and music. It can be used to extract the data from the audio files we will see it later.
 import librosa
@@ -35,6 +35,7 @@ st.set_page_config(
 #TITLE
 st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emotions</h1>", unsafe_allow_html=True )
 
+st.text(len(sd.query_devices()))
 
 # #RECORD BUTTON
 # sound = np.empty
@@ -55,6 +56,7 @@ st.header("1. Record your own voice")
 
 
 if st.button(f"Click to Record"):
+
     record_state = st.text("Recording...")
     duration = 5  # seconds
     fs = 48000
