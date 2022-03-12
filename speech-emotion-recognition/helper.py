@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import librosa
 import sounddevice as sd
-import wavio
-
+#import wavio
+from scipy.io.wavfile import write
 
 def read_audio(file):
     with open(file, "rb") as audio_file:
@@ -19,5 +19,9 @@ def record(duration, fs):
 
 
 def save_record(path_myrecording, myrecording, fs):
-    wavio.write(path_myrecording, myrecording, fs, sampwidth=2)
+    write(
+        path_myrecording,
+        fs,
+        myrecording
+    )
     return None
