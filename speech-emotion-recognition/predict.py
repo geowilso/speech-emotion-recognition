@@ -18,6 +18,13 @@ def playback(myrecording):
     sd.stop()
 
 
+def load(uploaded_file):
+    sr = 44100
+
+    wav = librosa.load(uploaded_file, sr=sr)
+    return wav
+
+
 def processing(uploaded_file):
 
     n_mfcc = 13

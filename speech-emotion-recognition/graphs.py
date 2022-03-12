@@ -4,12 +4,12 @@ import matplotlib.pyplot as plt
 import librosa
 import librosa.display
 
-from predict import chunks, model_predict, processing
+from predict import chunks, model_predict, load
 
 def draw_mel(uploaded_file):
 
-    mfcc_pad_T_reshape, wav = processing(uploaded_file)
-    d = librosa.stft(wav)  # STFT of y
+    wav = load(uploaded_file)
+    d = librosa.stft(wav[0])  # STFT of y
     S_db = librosa.amplitude_to_db(np.abs(d), ref=np.max)
 
     fig, ax = plt.subplots()
