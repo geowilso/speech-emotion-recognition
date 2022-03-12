@@ -4,14 +4,13 @@ import matplotlib.pyplot as plt
 import librosa
 import librosa.display
 
-from predict import chunks, model_predict
+from predict import chunks, model_predict, processing
 
 def draw_mel(uploaded_file):
-    sr = 44100
 
-    wav = librosa.load(uploaded_file, sr=sr)
-    D = librosa.stft(wav[0])  # STFT of y
-    S_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+    wav = processing(uploaded_file)
+    d = librosa.stft(wav[0])  # STFT of y
+    S_db = librosa.amplitude_to_db(np.abs(d), ref=np.max)
 
     fig, ax = plt.subplots()
     img = librosa.display.specshow(S_db, x_axis='time', y_axis='linear', ax=ax)
