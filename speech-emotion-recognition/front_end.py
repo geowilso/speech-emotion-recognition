@@ -57,7 +57,7 @@ st.header("1. Record your own voice")
 
 if st.button(f"Click to Record"):
     record_state = st.text("Recording...")
-    duration = 5  # seconds
+    duration = 2  # seconds
     fs = 48000
     myrecording = record(duration, fs)
     record_state.text(f"Saving sample as test.wav")
