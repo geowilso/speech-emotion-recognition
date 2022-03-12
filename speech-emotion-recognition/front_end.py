@@ -1,6 +1,7 @@
 # IMPORTS
 import streamlit as st
 import numpy as np
+
 import pandas as pd
 import os
 import sys
@@ -56,10 +57,6 @@ st.header("1. Record your own voice")
 
 
 if st.button(f"Click to Record"):
-<<<<<<< HEAD
-=======
-
->>>>>>> 776cd6d6268ca7b27d9c35d396c5de18cc5f7fc5
     record_state = st.text("Recording...")
     duration = 2  # seconds
     fs = 48000
