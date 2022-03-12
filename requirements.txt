@@ -41,6 +41,9 @@ wave
 sounddevice
 #pyaudio
 wavio
+libportaudio2
+
+
 #data viz
 matplotlib
 seaborn
