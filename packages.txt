@@ -11,4 +11,3 @@ libportaudio2
 portaudio19-dev
 python3-pyaudio
 libasound-dev
-wavio
