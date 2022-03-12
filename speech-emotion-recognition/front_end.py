@@ -111,7 +111,6 @@ if uploaded_file is not None:
     st.markdown(result_text, unsafe_allow_html=True)
 
     plot = draw_mel(uploaded_file)
-
     plot
 
 
