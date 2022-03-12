@@ -1,6 +1,7 @@
 # IMPORTS
 import streamlit as st
 import numpy as np
+
 import pandas as pd
 import os
 import sys
@@ -12,7 +13,7 @@ import sounddevice as sd
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
-
+# trial
 # to play the audio files
 from IPython.display import Audio
 import warnings
@@ -54,29 +55,28 @@ st.text(len(sd.query_devices()))
 
 st.header("1. Record your own voice")
 
-filename = st.text_input("Choose a filename: ")
 
 if st.button(f"Click to Record"):
-    if filename == "":
-        st.warning("Choose a filename.")
-    else:
-        record_state = st.text("Recording...")
-        duration = 5  # seconds
-        fs = 44100
-        myrecording = record(duration, fs)
-        record_state.text(f"Saving sample as {filename}.mp3")
+    record_state = st.text("Recording...")
+    duration = 2  # seconds
+    fs = 48000
+    myrecording = record(duration, fs)
+    record_state.text(f"Saving sample as test.wav")
 
-        path_myrecording = f"./samples/{filename}.mp3"
+    uploaded_file = f"./temporary_recording/test.wav"
 
-        save_record(path_myrecording, myrecording, fs)
-        record_state.text(f"Done! Saved sample as {filename}.mp3")
+    save_record(uploaded_file, myrecording, fs)
+    record_state.text(f"Done! Saved sample as test.wav")
 
-        st.audio(read_audio(path_myrecording))
+    st.audio(read_audio(uploaded_file))
 
-st.header("2. Upload an existing file")
-#UPLOAD BUTTON
-uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None:
+
+    #UPLOAD BUTTON
+
+else:
+    st.header("2. Upload an existing file")
+    uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file:
 
     X = processing(uploaded_file)
 
