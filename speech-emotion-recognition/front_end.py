@@ -77,7 +77,6 @@ st.header("2. Upload an existing file")
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
-
     X = processing(uploaded_file)
 
     # st.text(wav[0].shape)
@@ -85,7 +84,7 @@ if uploaded_file is not None:
     # st.text(mfcc_pad.shape)
     # st.text(mfcc_pad_T.shape)
 
-    pred = model_predict(X)
+    pred = model_predict(X[0])
 
     size = pred['result'][0] * 100
     result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][0]}; font-size: {size}px;'>{pred['emotion'][0]} {pred['percent'][0]}</p>"
@@ -109,7 +108,7 @@ if uploaded_file is not None:
     result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][3]}; font-size: {size}px;'>{pred['emotion'][3]} {pred['percent'][3]}</p>"
     st.markdown(result_text, unsafe_allow_html=True)
 
-    plot = draw_mel(uploaded_file)
+    plot = draw_mel(X[1][0])
     plot
 
 
