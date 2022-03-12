@@ -1,5 +1,6 @@
 from os.path import isfile
 from os.path import dirname
+import pandas as pd
 
 version_file = '{}/version.txt'.format(dirname(__file__))
 
