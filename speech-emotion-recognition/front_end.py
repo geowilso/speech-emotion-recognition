@@ -87,9 +87,9 @@ if uploaded_file is not None:
     result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][3]}; font-size: {size}px;'>{pred['emotion'][3]} {pred['percent'][3]}</p>"
     st.markdown(result_text, unsafe_allow_html=True)
 
-    #plot = draw_mel(uploaded_file)
+    plot = draw_mel(uploaded_file)
 
-    #st.pyplot(plot)
+    plot
 
 
 # col1, col2, col3 = st.columns(3)
