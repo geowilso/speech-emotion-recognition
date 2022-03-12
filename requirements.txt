@@ -6,15 +6,12 @@ wheel>=0.29
 jupyter
 
 # data science
-numpy
+numpy.1.18.5
 pandas
 scikit-learn
 tensorflow
-xgboost
-statsmodels
 
 # tests/linter
-black
 coverage
 flake8
 pytest
@@ -28,7 +25,6 @@ s3fs
 
 # utilities
 six>=1.14
-joblib
 memoized-property
 termcolor
 
@@ -40,8 +36,6 @@ soundFile
 wave
 sounddevice
 #pyaudio
-wavio
-
 
 
 #data viz

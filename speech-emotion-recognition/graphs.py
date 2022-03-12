@@ -28,51 +28,53 @@ def plot_chunks(file):
     array = np.array(chunk_preds)
     df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
 
+    fig = plt.figure(figsize=(15,8))
+
     plt.plot(
         'Angry',
         data=df,
         marker='o',
         markerfacecolor='blue',
         markersize=12,
-        color='skyblue',
+        color='red',
         linewidth=4,
-        label="toto",
+        label="Angry",
         linestyle='dashed',
     )
 
-   plt.plot(
+    plt.plot(
         'Happy',
         data=df,
         marker='o',
         markerfacecolor='blue',
         markersize=12,
-        color='skyblue',
+        color='yellow',
         linewidth=4,
-        label="toto",
+        label="Happy",
         linestyle='dashed',
     )
 
-   plt.plot(
+    plt.plot(
         'Neutral',
         data=df,
         marker='o',
         markerfacecolor='blue',
         markersize=12,
-        color='skyblue',
+        color='grey',
         linewidth=4,
-        label="toto",
+        label="Neutral",
         linestyle='dashed',
     )
 
-   plt.plot(
+    plt.plot(
         'Sad',
         data=df,
         marker='o',
         markerfacecolor='blue',
         markersize=12,
-        color='skyblue',
+        color='blue',
         linewidth=4,
-        label="toto",
+        label="Sad",
         linestyle='dashed',
     )
 
