@@ -57,26 +57,26 @@ st.header("1. Record your own voice")
 
 
 if st.button(f"Click to Record"):
-    record_state = st.text("Recording...")
-    duration = 2  # seconds
-    fs = 48000
-    myrecording = record(duration, fs)
-    record_state.text(f"Saving sample as test.wav")
+    if filename == "":
+        st.warning("Choose a filename.")
+    else:
+        record_state = st.text("Recording...")
+        duration = 5  # seconds
+        fs = 44100
+        myrecording = record(duration, fs)
+        record_state.text(f"Saving sample as {filename}.mp3")
 
-    uploaded_file = f"./temporary_recording/test.wav"
+        path_myrecording = f"./samples/{filename}.mp3"
 
-    save_record(uploaded_file, myrecording, fs)
-    record_state.text(f"Done! Saved sample as test.wav")
+        save_record(path_myrecording, myrecording, fs)
+        record_state.text(f"Done! Saved sample as {filename}.mp3")
 
-    st.audio(read_audio(uploaded_file))
+        st.audio(read_audio(path_myrecording))
 
-
-    #UPLOAD BUTTON
-
-else:
-    st.header("2. Upload an existing file")
-    uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file:
+st.header("2. Upload an existing file")
+#UPLOAD BUTTON
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
 
     X = processing(uploaded_file)
 
@@ -85,7 +85,7 @@ if uploaded_file:
     # st.text(mfcc_pad.shape)
     # st.text(mfcc_pad_T.shape)
 
-    pred = model_predict(X)
+    pred = model_predict(X[0])
 
     size = pred['result'][0] * 100
     result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][0]}; font-size: {size}px;'>{pred['emotion'][0]} {pred['percent'][0]}</p>"
@@ -109,7 +109,7 @@ if uploaded_file:
     result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][3]}; font-size: {size}px;'>{pred['emotion'][3]} {pred['percent'][3]}</p>"
     st.markdown(result_text, unsafe_allow_html=True)
 
-    plot = draw_mel(uploaded_file)
+    plot = draw_mel(X[1][0])
     plot
 
 

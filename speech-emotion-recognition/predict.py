@@ -6,23 +6,22 @@ import pandas as pd
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-def record():
-    fs = 44100
-    duration = 3  # seconds
-    myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-    print(type(myrecording))
-    return myrecording
+# def record():
+#     fs = 44100
+#     duration = 3  # seconds
+#     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+#     print(type(myrecording))
+#     return myrecording
 
-def playback(myrecording):
-    sd.play(myrecording, 44100)
-    sd.stop()
+# def playback(myrecording):
+#     sd.play(myrecording, 44100)
+#     sd.stop()
 
 
-def load(uploaded_file):
-    sr = 44100
-
-    wav = librosa.load(uploaded_file, sr=sr)
-    return wav
+# def load(uploaded_file):
+#     sr = 44100
+#     wav = librosa.load(uploaded_file, sr=sr)
+#     return wav
 
 
 def processing(uploaded_file):
@@ -48,7 +47,7 @@ def processing(uploaded_file):
 
     mfcc_pad_T = mfcc_pad.T
     mfcc_pad_T_reshape = mfcc_pad_T.reshape(1, 615, 13)
-    return mfcc_pad_T_reshape
+    return (mfcc_pad_T_reshape, wav)
 
 
 def chunks(uploaded_file):
