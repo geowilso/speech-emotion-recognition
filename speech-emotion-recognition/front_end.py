@@ -51,9 +51,6 @@ st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emoti
 #     print(sound)
 #     playback(sound)
 
-
-"# Streamlit showcase"
-
 st.header("1. Record your own voice")
 
 filename = st.text_input("Choose a filename: ")
@@ -75,6 +72,7 @@ if st.button(f"Click to Record"):
 
         st.audio(read_audio(path_myrecording))
 
+st.header("2. Upload an existing file")
 #UPLOAD BUTTON
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
