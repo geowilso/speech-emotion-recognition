@@ -53,29 +53,28 @@ st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emoti
 
 st.header("1. Record your own voice")
 
-filename = st.text_input("Choose a filename: ")
 
 if st.button(f"Click to Record"):
-    if filename == "":
-        st.warning("Choose a filename.")
-    else:
-        record_state = st.text("Recording...")
-        duration = 5  # seconds
-        fs = 48000
-        myrecording = record(duration, fs)
-        record_state.text(f"Saving sample as {filename}.mp3")
+    record_state = st.text("Recording...")
+    duration = 5  # seconds
+    fs = 48000
+    myrecording = record(duration, fs)
+    record_state.text(f"Saving sample as test.wav")
 
-        path_myrecording = f"./samples/{filename}.mp3"
+    uploaded_file = f"./temporary_recording/test.wav"
 
-        save_record(path_myrecording, myrecording, fs)
-        record_state.text(f"Done! Saved sample as {filename}.mp3")
+    save_record(uploaded_file, myrecording, fs)
+    record_state.text(f"Done! Saved sample as test.wav")
 
-        st.audio(read_audio(path_myrecording))
+    st.audio(read_audio(uploaded_file))
 
-st.header("2. Upload an existing file")
-#UPLOAD BUTTON
-uploaded_file = st.file_uploader("Choose a file")
-if uploaded_file is not None:
+
+    #UPLOAD BUTTON
+
+else:
+    st.header("2. Upload an existing file")
+    uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file:
 
     X = processing(uploaded_file)
 
