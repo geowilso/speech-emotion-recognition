@@ -27,4 +27,56 @@ def plot_chunks(file):
         chunk_preds.append(chunk_pred)
     array = np.array(chunk_preds)
     df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
-    return df
+
+    fig = plt.figure(figsize=(15,8))
+
+    plt.plot(
+        'Angry',
+        data=df,
+        marker='o',
+        markerfacecolor='blue',
+        markersize=12,
+        color='red',
+        linewidth=4,
+        label="Angry",
+        linestyle='dashed',
+    )
+
+    plt.plot(
+        'Happy',
+        data=df,
+        marker='o',
+        markerfacecolor='blue',
+        markersize=12,
+        color='yellow',
+        linewidth=4,
+        label="Happy",
+        linestyle='dashed',
+    )
+
+    plt.plot(
+        'Neutral',
+        data=df,
+        marker='o',
+        markerfacecolor='blue',
+        markersize=12,
+        color='grey',
+        linewidth=4,
+        label="Neutral",
+        linestyle='dashed',
+    )
+
+    plt.plot(
+        'Sad',
+        data=df,
+        marker='o',
+        markerfacecolor='blue',
+        markersize=12,
+        color='blue',
+        linewidth=4,
+        label="Sad",
+        linestyle='dashed',
+    )
+
+    plt.legend()
+    plt.show()
