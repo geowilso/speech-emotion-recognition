@@ -1,4 +1,5 @@
 # IMPORTS
+from re import A
 import streamlit as st
 import numpy as np
 
@@ -21,96 +22,113 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # model
-from predict import record, processing, model_predict, playback
-from graphs import draw_mel
+from predict import record, processing, model_predict, playback, grab_chunks
+from graphs import draw_mel, plot_chunks
 from helper import read_audio, record, save_record
 
 #PAGE CONFIG
 st.set_page_config(
-     page_title="Upload Your Emotions",
+     page_title="speech-emotion-recognition",
      page_icon="🎥",
      layout="wide",
      initial_sidebar_state="expanded",
  )
 
 #TITLE
-st.markdown("<h1 style='text-align: center; color: lightblue;'>Upload Your Emotions</h1>", unsafe_allow_html=True )
+st.markdown(
+    "<h1 style='text-align: center; color: #a6d1ff;'>Speech Emotion Recognition</h1>",
+    unsafe_allow_html=True)
 
-st.text(len(sd.query_devices()))
+# st.text(len(sd.query_devices()))
 
-# #RECORD BUTTON
-# sound = np.empty
-# if st.button('Record', help='record your emotions'):
-#     with st.spinner('Recording for 3 seconds ....'):
-#         sound = record()
-#         time.sleep(5)
-#     if sound.any():
-#         st.success("Recording completed")
+st.markdown(
+    "<h1 style='text-align: left; color: #a6d1ff;'>Either record your own voice here:</h1>",
+    unsafe_allow_html=True)
+#st.header("1. Record your own voice")
 
-
-# #PLAYBACK BUTTON
-# if st.button('Play Recording', help='playback your audio'):
-#     print(sound)
-#     playback(sound)
-
-st.header("1. Record your own voice")
-
-
+#RECORD BUTTON
 if st.button(f"Click to Record"):
-    if filename == "":
-        st.warning("Choose a filename.")
-    else:
-        record_state = st.text("Recording...")
-        duration = 5  # seconds
-        fs = 44100
-        myrecording = record(duration, fs)
-        record_state.text(f"Saving sample as {filename}.mp3")
+    record_state = st.text("Recording for 5 seconds...")
+    duration = 5  # seconds
+    fs = 44100
+    myrecording = record(duration, fs)
+    record_state.text(f"Saving sample as test.wav")
 
-        path_myrecording = f"./samples/{filename}.mp3"
+    uploaded_file = f"./temporary_recording/test.wav"
 
-        save_record(path_myrecording, myrecording, fs)
-        record_state.text(f"Done! Saved sample as {filename}.mp3")
+    save_record(uploaded_file, myrecording, fs)
+    record_state.text(f"Done! Saved sample as test.wav")
 
-        st.audio(read_audio(path_myrecording))
+    st.audio(read_audio(uploaded_file))
 
-st.header("2. Upload an existing file")
-#UPLOAD BUTTON
-uploaded_file = st.file_uploader("Choose a file")
+else:
+    st.markdown(
+        "<h1 style='text-align: left; color: #a6d1ff;'>Or upload an existing wav file here:</h1>",
+        unsafe_allow_html=True)
+    #UPLOAD BUTTON
+    uploaded_file = st.file_uploader("")
+
 if uploaded_file is not None:
 
-    X = processing(uploaded_file)
+    df, wav = grab_chunks(uploaded_file)
+    fig = plot_chunks(df)
 
-    # st.text(wav[0].shape)
-    # st.text(mfcc.shape)
-    # st.text(mfcc_pad.shape)
-    # st.text(mfcc_pad_T.shape)
+    col1, col2 = st.columns(2)
+    with col1:
+        fig
 
-    pred = model_predict(X[0])
+    with col2:
+        a = df['Angry'].mean()
+        h = df['Happy'].mean()
+        n = df['Neutral'].mean()
+        s = df['Sad'].mean()
 
-    size = pred['result'][0] * 100
-    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][0]}; font-size: {size}px;'>{pred['emotion'][0]} {pred['percent'][0]}</p>"
-    st.markdown(result_text, unsafe_allow_html=True)
+        output_list = [a,h,n,s]
+        emotions = ['Angry', 'Happy', 'Neutral', 'Sad']
+        colours = ['#ff9c9f', '#ffe7ab', '#d1d1d1', '#a6d1ff']
+        mean_df = pd.DataFrame(output_list,columns=['result'])
+        mean_df['emotion'] = emotions
+        mean_df['colour'] = colours
+        mean_df['percent'] = mean_df['result'].apply(
+            lambda x: str(round(x * 100, 1)) + '%')
+        mean_df = mean_df.sort_values(by='result', ascending=False)
+        mean_df = mean_df.reset_index()
 
-    size = pred['result'][1] * 100
-    if size < 30:
-        size = 30
-    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][1]}; font-size: {size}px;'>{pred['emotion'][1]} {pred['percent'][1]}</p>"
-    st.markdown(result_text, unsafe_allow_html=True)
+        size = 100
 
-    size = pred['result'][2] * 100
-    if size < 20:
-        size = 20
-    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][2]}; font-size: {size}px;'>{pred['emotion'][2]} {pred['percent'][2]}</p>"
-    st.markdown(result_text, unsafe_allow_html=True)
+        for i in range(4):
+            result_text = f"<h1 style='text-align: center; color: {mean_df['colour'][i]}; font-size: {size}px;'>{mean_df['emotion'][i]} {mean_df['percent'][i]}</h1>"
+            st.markdown(result_text, unsafe_allow_html=True)
+            size -= 25
 
-    size = pred['result'][3] * 100
-    if size < 10:
-        size = 15
-    result_text = f"<p style='font-family:sans-serif; color:{pred['colour'][3]}; font-size: {size}px;'>{pred['emotion'][3]} {pred['percent'][3]}</p>"
-    st.markdown(result_text, unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown(
+            "<h1 style='text-align: center; color: #a6d1ff;'>Melspectrogram</h1>",
+            unsafe_allow_html=True)
+        fig = draw_mel(wav[0])
+        fig
+    with col2:
+        st.markdown(
+            "<h1 style='text-align: center; color: #a6d1ff;'>Explanations</h1>",
+            unsafe_allow_html=True)
 
-    plot = draw_mel(X[1][0])
-    plot
+    with col3:
+        st.markdown(
+            "<h1 style='text-align: center; color: #a6d1ff;'>Other stuff</h1>",
+            unsafe_allow_html=True)
+
+
+
+    # col1, col2, col3 = st.columns(3)
+    # with col1:
+    #     plot1 = draw_mel(X[1][0])
+    #     st.pyplot(plot1)
+
+    # with col2:
+    #     plot2 = plot_chunks(uploaded_file)
+    #     st.pyplot(plot2)
+
 
 
 # col1, col2, col3 = st.columns(3)

@@ -5,38 +5,33 @@ import matplotlib.pyplot as plt
 import librosa
 import librosa.display
 
-from predict import chunks, model_predict, load
 
-def draw_mel(uploaded_file):
+from predict import grab_chunks, model_predict, load
+
+
+def draw_mel(wave):
 
     # wav = load(uploaded_file)
-    d = librosa.stft(uploaded_file)  # STFT of y
+    d = librosa.stft(wave)  # STFT of y
     S_db = librosa.amplitude_to_db(np.abs(d), ref=np.max)
 
     fig, ax = plt.subplots()
-    img = librosa.display.specshow(S_db, x_axis='time', y_axis='linear', ax=ax)
-    ax.set(title='Now with labeled axes!')
+    img = librosa.display.specshow(S_db, x_axis='time', y_axis='linear', ax=ax, fmax=44100)
+    #ax.set(title='Melspectrogram')
     fig.colorbar(img, ax=ax, format="%+2.f dB")
     return fig
 
-def plot_chunks(file):
-    chunks = chunks(file)
-    chunk_preds = []
-    for chunk in chunks:
-        chunk_pred = model_predict(chunk)
-        chunk_preds.append(chunk_pred)
-    array = np.array(chunk_preds)
-    df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
 
-    fig = plt.figure(figsize=(15,8))
+def plot_chunks(df):
+    fig = plt.figure()
 
     plt.plot(
         'Angry',
         data=df,
         marker='o',
-        markerfacecolor='red',
+        markerfacecolor='#ff9c9f',
         markersize=12,
-        color='red',
+        color='#ff9c9f',
         linewidth=4,
         label="Angry",
         linestyle='dashed',
@@ -46,9 +41,9 @@ def plot_chunks(file):
         'Happy',
         data=df,
         marker='o',
-        markerfacecolor='yellow',
+        markerfacecolor='#ffe7ab',
         markersize=12,
-        color='yellow',
+        color='#ffe7ab',
         linewidth=4,
         label="Happy",
         linestyle='dashed',
@@ -58,9 +53,9 @@ def plot_chunks(file):
         'Neutral',
         data=df,
         marker='o',
-        markerfacecolor='grey',
+        markerfacecolor='#d1d1d1',
         markersize=12,
-        color='grey',
+        color='#d1d1d1',
         linewidth=4,
         label="Neutral",
         linestyle='dashed',
@@ -70,13 +65,15 @@ def plot_chunks(file):
         'Sad',
         data=df,
         marker='o',
-        markerfacecolor='blue',
+        markerfacecolor='#a6d1ff',
         markersize=12,
-        color='blue',
+        color='#a6d1ff',
         linewidth=4,
         label="Sad",
         linestyle='dashed',
     )
 
-    plt.legend()
+    # plt.legend()
     plt.show()
+
+    return fig
