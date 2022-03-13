@@ -6,22 +6,20 @@ import pandas as pd
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# def record():
-#     fs = 44100
-#     duration = 3  # seconds
-#     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-#     print(type(myrecording))
-#     return myrecording
+def record(duration, fs):
+    myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+    print(type(myrecording))
+    return myrecording
 
-# def playback(myrecording):
-#     sd.play(myrecording, 44100)
-#     sd.stop()
+def playback(myrecording):
+    sd.play(myrecording, 44100)
+    sd.stop()
 
 
-# def load(uploaded_file):
-#     sr = 44100
-#     wav = librosa.load(uploaded_file, sr=sr)
-#     return wav
+def load(uploaded_file):
+    sr = 44100
+    wav = librosa.load(uploaded_file, sr=sr)
+    return wav
 
 
 def processing(uploaded_file):
@@ -50,7 +48,7 @@ def processing(uploaded_file):
     return (mfcc_pad_T_reshape, wav)
 
 
-def chunks(uploaded_file):
+def grab_chunks(uploaded_file):
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
@@ -63,6 +61,8 @@ def chunks(uploaded_file):
                                 n_mfcc=n_mfcc,
                                 n_fft=n_fft,
                                 hop_length=hop_length)
+
+    mfcc_T = mfcc.T
 
     mfcc_list = []
 
@@ -86,7 +86,20 @@ def chunks(uploaded_file):
         mfcc_pad_T_reshape = mfcc_pad_T.reshape(1, 615, 13)
         mfcc_list_pad.append(mfcc_pad_T_reshape)
 
-    return mfcc_list_pad
+    model = load_model("models/speech_emotion_model_0.h5")
+
+    predictions = []
+
+    for i in mfcc_list_pad:
+        prediction = model.predict(i)
+        predictions.append(prediction[0])
+
+
+    array = np.array(predictions)
+    df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
+
+    return df, wav
+
 
 def model_predict(mfcc_pad_T_reshape):
     model = load_model("models/speech_emotion_model_0.h5")
