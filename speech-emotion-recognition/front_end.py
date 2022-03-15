@@ -108,19 +108,19 @@ if result:
             else:
                 b64_str = b64_str_metadata
 
-            decoded = base64.b64decode(b64_str)
+            uploaded_file = base64.b64decode(b64_str)
 
-            st.write("Read sound from Frontend")
-            st.audio(decoded)
+            # st.write("Read sound from Frontend")
+            # st.audio(decoded)
 
-            #save it server side if needed
-            with open('test.wav', 'wb') as f:
-                f.write(decoded)
+            # #save it server side if needed
+            # with open('test.wav', 'wb') as f:
+            #     f.write(decoded)
 
-            uploaded_file = open('test.wav', 'rb')
+            # uploaded_file = open('test.wav', 'rb')
 
-            st.write("Read sound by saving in server and reloading file")
-            st.audio(uploaded_file)
+            # st.write("Read sound by saving in server and reloading file")
+            # st.audio(uploaded_file)
 #new
 
 
