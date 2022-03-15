@@ -32,6 +32,7 @@ import base64
 from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
+from scipy.io import wavfile
 
 
 
@@ -108,20 +109,22 @@ if result:
             else:
                 b64_str = b64_str_metadata
 
-            uploaded_file = base64.b64decode(b64_str)
+            decoded = base64.b64decode(b64_str)
+            st.write(type(decoded))
+            st.write("Read sound from Frontend")
+            st.audio(decoded)
 
-            # st.write("Read sound from Frontend")
-            # st.audio(decoded)
+            #save it server side if needed
+            with open('test.wav', 'wb') as f:
+                f.write(decoded)
 
-            # #save it server side if needed
-            # with open('test.wav', 'wb') as f:
-            #     f.write(decoded)
+            # uploaded_file = open('test.wav', '')
+            sr,data=wavfile.read("test.wav")
+            st.write(type(uploaded_file))
 
-            # uploaded_file = open('test.wav', 'rb')
+            st.write("Read sound by saving in server and reloading file")
+            st.audio(uploaded_file)
 
-            # st.write("Read sound by saving in server and reloading file")
-            # st.audio(uploaded_file)
-#new
 
 
 
@@ -149,7 +152,7 @@ else:
 
 if uploaded_file is not None:
 
-    df, wav = grab_chunks(uploaded_file)
+    df, wav = grab_chunks(data)
     fig = plot_chunks(df)
 
     col1, col2 = st.columns(2)
