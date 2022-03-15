@@ -49,15 +49,16 @@ def processing(uploaded_file):
     return (mfcc_pad_T_reshape, wav)
 
 
-def grab_chunks(uploaded_file):
+def grab_chunks(data):
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
     sr = 44100
 
-    wav = librosa.load(uploaded_file, sr=sr)
+    # wav = librosa.load(uploaded_file, sr=sr)
 
-    mfcc = librosa.feature.mfcc(wav[0],
+
+    mfcc = librosa.feature.mfcc(data,
                                 sr=sr,
                                 n_mfcc=n_mfcc,
                                 n_fft=n_fft,
@@ -99,7 +100,7 @@ def grab_chunks(uploaded_file):
     array = np.array(predictions)
     df = pd.DataFrame(array, columns=['Angry', 'Happy', 'Neutral', 'Sad'])
 
-    return df, wav
+    return df#,wav
 
 
 def model_predict(mfcc_pad_T_reshape):

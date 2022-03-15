@@ -32,6 +32,7 @@ import base64
 from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
+from scipy.io import wavfile
 
 
 
@@ -114,17 +115,17 @@ if result:
             st.audio(decoded)
 
             #save it server side if needed
-            with open('test.wav', 'wb') as f:
-                f.write(decoded)
+            #with open('test.wav', 'wb') as f:
+            #    f.write(decoded)
 
-            file = open('test.wav', 'rb')
+            #file = open('test.wav', 'rb')
 
             uploaded_file = f"./temporary_recording/test.wav"
             save_record(uploaded_file, decoded, 44100)
 
             st.write("Read sound by saving in server and reloading file")
-            st.audio(file)
-#new
+            #st.audio(uploaded_file)
+
 
 
 
@@ -155,6 +156,7 @@ if uploaded_file is not None:
     st.audio(uploaded_file)
 
     df, wav = grab_chunks(uploaded_file)
+
     fig = plot_chunks(df)
 
     col1, col2 = st.columns(2)
