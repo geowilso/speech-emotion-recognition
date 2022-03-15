@@ -36,7 +36,9 @@ soundFile
 wave
 sounddevice
 
-
+#recording on streamlit
+bokeh
+streamlit_bokeh_events
 
 #data viz
 matplotlib

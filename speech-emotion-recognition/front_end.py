@@ -26,40 +26,119 @@ from predict import record, processing, model_predict, playback, grab_chunks
 from graphs import draw_mel, plot_chunks
 from helper import read_audio, record, save_record
 
-#PAGE CONFIG
-st.set_page_config(
-     page_title="speech-emotion-recognition",
-     page_icon="🎥",
-     layout="wide",
-     initial_sidebar_state="expanded",
- )
+
+#new
+import base64
+from bokeh.models.widgets import Button
+from bokeh.models import CustomJS
+from streamlit_bokeh_events import streamlit_bokeh_events
+
+
+
+# #PAGE CONFIG
+# st.set_page_config(
+#     page_title="speech-emotion-recognition",
+#     page_icon="🎥",
+#     layout="wide",
+#     initial_sidebar_state="expanded",
+# )
 
 #TITLE
 st.markdown(
     "<h1 style='text-align: center; color: #a6d1ff;'>Speech Emotion Recognition</h1>",
     unsafe_allow_html=True)
 
-# st.text(len(sd.query_devices()))
-
 st.markdown(
     "<h1 style='text-align: left; color: #a6d1ff;'>Either record your own voice here:</h1>",
     unsafe_allow_html=True)
 #st.header("1. Record your own voice")
 
+
+stt_button = Button(label="Click to Record", width=100)
+
+stt_button.js_on_event(
+    "button_click",
+    CustomJS(code="""
+const timeMilliSec = 5000 //Fixed 5sec recording ... change here the value
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(stream => {
+    const mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.start();
+    const audioChunks = [];
+    mediaRecorder.addEventListener("dataavailable", event => {
+      audioChunks.push(event.data);
+    });
+    mediaRecorder.addEventListener("stop", () => {
+      //convert audioBuffer to wav
+      const audioBlob = new Blob(audioChunks, {type:'audio/wav'});
+      //create base64 reader
+      var reader = new FileReader();
+      reader.readAsDataURL(audioBlob);
+      reader.onloadend = function() {
+        //read base64
+        var base64data = reader.result;
+        //send data to streamlit
+        document.dispatchEvent(new CustomEvent("GET_AUDIO_BASE64", {detail: base64data}));
+      }
+    });
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, timeMilliSec);
+  });
+  """))
+
+result = streamlit_bokeh_events(stt_button,
+                                events="GET_AUDIO_BASE64",
+                                key="listen",
+                                refresh_on_update=False,
+                                override_height=75,
+                                debounce_time=0)
+
+
+
+if result:
+    if "GET_AUDIO_BASE64" in result:
+        b64_str_metadata = result.get("GET_AUDIO_BASE64")
+        metadata_string = "data:audio/wav;base64,"
+        if len(b64_str_metadata) > len(metadata_string):
+            #get rid of metadata (data:audio/wav;base64,)
+
+            if b64_str_metadata.startswith(metadata_string):
+                b64_str = b64_str_metadata[len(metadata_string):]
+            else:
+                b64_str = b64_str_metadata
+
+            decoded = base64.b64decode(b64_str)
+
+            st.write("Read sound from Frontend")
+            st.audio(decoded)
+
+            #save it server side if needed
+            with open('test.wav', 'wb') as f:
+                f.write(decoded)
+
+            uploaded_file = open('test.wav', 'rb')
+
+            st.write("Read sound by saving in server and reloading file")
+            st.audio(uploaded_file)
+#new
+
+
+
 #RECORD BUTTON
-if st.button(f"Click to Record"):
-    record_state = st.text("Recording for 5 seconds...")
-    duration = 5  # seconds
-    fs = 44100
-    myrecording = record(duration, fs)
-    record_state.text(f"Saving sample as test.wav")
+# if st.button(f"Click to Record"):
+#     record_state = st.text("Recording for 5 seconds...")
+#     duration = 5  # seconds
+#     fs = 44100
+#     myrecording = record(duration, fs)
+#     record_state.text(f"Saving sample as test.wav")
 
-    uploaded_file = f"./temporary_recording/test.wav"
+# uploaded_file = f"./temporary_recording/test.wav"
 
-    save_record(uploaded_file, myrecording, fs)
-    record_state.text(f"Done! Saved sample as test.wav")
+# save_record(uploaded_file, myrecording, fs)
+# record_state.text(f"Done! Saved sample as test.wav")
 
-    st.audio(read_audio(uploaded_file))
+# st.audio(read_audio(uploaded_file))
 
 else:
     st.markdown(
@@ -94,44 +173,9 @@ if uploaded_file is not None:
         mean_df = mean_df.sort_values(by='result', ascending=False)
         mean_df = mean_df.reset_index()
 
-        size = 100
+        size = 50
 
         for i in range(4):
             result_text = f"<h1 style='text-align: center; color: {mean_df['colour'][i]}; font-size: {size}px;'>{mean_df['emotion'][i]} {mean_df['percent'][i]}</h1>"
             st.markdown(result_text, unsafe_allow_html=True)
-            size -= 25
-
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown(
-            "<h1 style='text-align: center; color: #a6d1ff;'>Melspectrogram</h1>",
-            unsafe_allow_html=True)
-        fig = draw_mel(wav[0])
-        fig
-    with col2:
-        st.markdown(
-            "<h1 style='text-align: center; color: #a6d1ff;'>Explanations</h1>",
-            unsafe_allow_html=True)
-
-    with col3:
-        st.markdown(
-            "<h1 style='text-align: center; color: #a6d1ff;'>Other stuff</h1>",
-            unsafe_allow_html=True)
-
-
-
-    # col1, col2, col3 = st.columns(3)
-    # with col1:
-    #     plot1 = draw_mel(X[1][0])
-    #     st.pyplot(plot1)
-
-    # with col2:
-    #     plot2 = plot_chunks(uploaded_file)
-    #     st.pyplot(plot2)
-
-
-
-# col1, col2, col3 = st.columns(3)
-# with col1:
-#     st.header("A MEL_SPECTOGRAM")
-#     st.markdown("![Alt Text](https://media.giphy.com/media/vybWlRniCXzZC/giphy.gif)")
+            size -= 12
