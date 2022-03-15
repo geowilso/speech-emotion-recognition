@@ -3,6 +3,7 @@ import soundfile as sf
 import librosa
 import numpy as np
 import pandas as pd
+import sounddevice as sd
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 

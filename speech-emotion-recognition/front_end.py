@@ -108,19 +108,22 @@ if result:
             else:
                 b64_str = b64_str_metadata
 
-            uploaded_file = base64.b64decode(b64_str)
+            decoded = base64.b64decode(b64_str)
 
-            # st.write("Read sound from Frontend")
-            # st.audio(decoded)
+            st.write("Read sound from Frontend")
+            st.audio(decoded)
 
-            # #save it server side if needed
-            # with open('test.wav', 'wb') as f:
-            #     f.write(decoded)
+            #save it server side if needed
+            with open('test.wav', 'wb') as f:
+                f.write(decoded)
 
-            # uploaded_file = open('test.wav', 'rb')
+            file = open('test.wav', 'rb')
 
-            # st.write("Read sound by saving in server and reloading file")
-            # st.audio(uploaded_file)
+            uploaded_file = f"./temporary_recording/test.wav"
+            save_record(uploaded_file, decoded, 44100)
+
+            st.write("Read sound by saving in server and reloading file")
+            st.audio(file)
 #new
 
 
@@ -148,6 +151,8 @@ else:
     uploaded_file = st.file_uploader("")
 
 if uploaded_file is not None:
+
+    st.audio(uploaded_file)
 
     df, wav = grab_chunks(uploaded_file)
     fig = plot_chunks(df)
