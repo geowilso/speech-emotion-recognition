@@ -9,7 +9,7 @@ wheel>=0.29
 numpy==1.18.5
 pandas
 #scikit-learn
-tensorflow
+tensorflow==2.3.4
 
 # tests/linter
 #coverage
@@ -30,11 +30,11 @@ tensorflow
 
 # WAV file packages
 librosa
-scipy #scipy.io.wavfile
+#scipy #scipy.io.wavfile
 IPython #play audio files
 soundFile
 wave
-sounddevice
+#sounddevice
 
 #recording on streamlit
 bokeh
@@ -49,3 +49,4 @@ plotly
 # frontend
 streamlit
 pydub
+AudioSegment
