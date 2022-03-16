@@ -114,12 +114,12 @@ if result:
             #save it server side if needed
             #test
 
-            file = f"./temporary_recording/test.wav"
-            with open(file, 'wb') as f:
+            uploaded_file = f"./temporary_recording/test.wav"
+            with open(uploaded_file, 'wb') as f:
                 f.write(decoded)
 
-            wav = AudioSegment.from_file(file)
-            uploaded_file = wav.export(file, format="wav")
+            wav = AudioSegment.from_file(uploaded_file)
+            export_file = wav.export(uploaded_file, format="wav")
 
             #with open('test.wav', 'wb') as f:
             #    f.write(decoded)

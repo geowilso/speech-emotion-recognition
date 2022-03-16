@@ -3,18 +3,18 @@ import soundfile as sf
 import librosa
 import numpy as np
 import pandas as pd
-import sounddevice as sd
+#import sounddevice as sd
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-def record(duration, fs):
-    myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-    print(type(myrecording))
-    return myrecording
+# def record(duration, fs):
+#     myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+#     print(type(myrecording))
+#     return myrecording
 
-def playback(myrecording):
-    sd.play(myrecording, 44100)
-    sd.stop()
+# def playback(myrecording):
+#     sd.play(myrecording, 44100)
+#     sd.stop()
 
 
 def load(uploaded_file):
