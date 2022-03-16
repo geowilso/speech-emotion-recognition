@@ -54,7 +54,6 @@ st.markdown(
     unsafe_allow_html=True)
 #st.header("1. Record your own voice")
 
-recorded_file = f"./temporary_recording/test.wav"
 
 stt_button = Button(label="Click to Record", width=100)
 
@@ -196,7 +195,7 @@ if uploaded_file is not None:
             size -= 12
 
 
-if recorded_file is not None:
+if export_file is not None:
 
     st.audio(recorded_file)
 
