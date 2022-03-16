@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import librosa
-import sounddevice as sd
+#import sounddevice as sd
 #import wavio
 from scipy.io.wavfile import write
 

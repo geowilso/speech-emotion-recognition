@@ -53,10 +53,11 @@ def grab_chunks(uploaded_file):
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
-    sr = 44100
 
-    wav = librosa.load(uploaded_file, sr=sr)
 
+    wav = librosa.load(uploaded_file)
+
+    sr = wav[1]
 
     mfcc = librosa.feature.mfcc(wav[0],
                                 sr=sr,
