@@ -70,10 +70,10 @@ def grab_chunks(uploaded_file):
     mfcc_list = []
 
 
-    while len(mfcc_T) > 150:
-        mfcc_chunk = mfcc_T[:150, :]
+    while len(mfcc_T) > 125:
+        mfcc_chunk = mfcc_T[:125, :]
         mfcc_list.append(mfcc_chunk)
-        mfcc_T = mfcc_T[150:, :]
+        mfcc_T = mfcc_T[125:, :]
     mfcc_list.append(mfcc_T)
 
     mfcc_list_pad = []
