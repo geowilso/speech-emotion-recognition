@@ -33,7 +33,7 @@ from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
 
-
+from pydub import AudioSegment
 
 # #PAGE CONFIG
 # st.set_page_config(
@@ -110,21 +110,13 @@ if result:
 
             decoded = base64.b64decode(b64_str)
 
-            st.write("Read sound from Frontend")
-            st.audio(decoded)
-
             #save it server side if needed
-            with open('test.wav', 'wb') as f:
+            file = f"./temporary_recording/test.wav"
+            with open(file, 'wb') as f:
                 f.write(decoded)
 
-            file = open('test.wav', 'rb')
-
-            uploaded_file = f"./temporary_recording/test.wav"
-            save_record(uploaded_file, decoded, 44100)
-
-            st.write("Read sound by saving in server and reloading file")
-            st.audio(file)
-#new
+            wav = AudioSegment.from_file(file)
+            uploaded_file = wav.export(file, format="wav")
 
 
 
