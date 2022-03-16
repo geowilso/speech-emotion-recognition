@@ -60,7 +60,7 @@ stt_button = Button(label="Click to Record", width=100)
 stt_button.js_on_event(
     "button_click",
     CustomJS(code="""
-const timeMilliSec = 7000 //Fixed 7sec recording ... change here the value
+const timeMilliSec = 8000 //Fixed 8sec recording ... change here the value
 navigator.mediaDevices.getUserMedia({ audio: true })
   .then(stream => {
     const mediaRecorder = new MediaRecorder(stream);
