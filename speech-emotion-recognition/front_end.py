@@ -22,7 +22,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # model
-from predict import grab_chunks  #processing, model_predict
+from predict import grab_chunks, grab_chunks_uploaded  #processing, model_predict
 from graphs import draw_mel, plot_chunks
 #from helper import read_audio, record, save_record
 
@@ -114,12 +114,12 @@ if result:
             #save it server side if needed
             #test
 
-            uploaded_file = f"./temporary_recording/test.wav"
-            with open(uploaded_file, 'wb') as f:
+            recorded_file = f"./temporary_recording/test.wav"
+            with open(recorded_file, 'wb') as f:
                 f.write(decoded)
 
-            wav = AudioSegment.from_file(uploaded_file)
-            export_file = wav.export(uploaded_file, format="wav")
+            wav = AudioSegment.from_file(recorded_file)
+            export_file = wav.export(recorded_file, format="wav")
 
             #with open('test.wav', 'wb') as f:
             #    f.write(decoded)
@@ -162,7 +162,7 @@ if uploaded_file is not None:
 
     st.audio(uploaded_file)
 
-    df, wav = grab_chunks(uploaded_file)
+    df, wav = grab_chunks_uploaded(uploaded_file)
 
     fig = plot_chunks(df)
 
@@ -180,6 +180,43 @@ if uploaded_file is not None:
         emotions = ['Angry', 'Happy', 'Neutral', 'Sad']
         colours = ['#ff9c9f', '#ffe7ab', '#d1d1d1', '#a6d1ff']
         mean_df = pd.DataFrame(output_list,columns=['result'])
+        mean_df['emotion'] = emotions
+        mean_df['colour'] = colours
+        mean_df['percent'] = mean_df['result'].apply(
+            lambda x: str(round(x * 100, 1)) + '%')
+        mean_df = mean_df.sort_values(by='result', ascending=False)
+        mean_df = mean_df.reset_index()
+
+        size = 50
+
+        for i in range(4):
+            result_text = f"<h1 style='text-align: center; color: {mean_df['colour'][i]}; font-size: {size}px;'>{mean_df['emotion'][i]} {mean_df['percent'][i]}</h1>"
+            st.markdown(result_text, unsafe_allow_html=True)
+            size -= 12
+
+
+if recorded_file is not None:
+
+    st.audio(recorded_file)
+
+    df, wav = grab_chunks(recorded_file)
+
+    fig = plot_chunks(df)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        fig
+
+    with col2:
+        a = df['Angry'].mean()
+        h = df['Happy'].mean()
+        n = df['Neutral'].mean()
+        s = df['Sad'].mean()
+
+        output_list = [a, h, n, s]
+        emotions = ['Angry', 'Happy', 'Neutral', 'Sad']
+        colours = ['#ff9c9f', '#ffe7ab', '#d1d1d1', '#a6d1ff']
+        mean_df = pd.DataFrame(output_list, columns=['result'])
         mean_df['emotion'] = emotions
         mean_df['colour'] = colours
         mean_df['percent'] = mean_df['result'].apply(
