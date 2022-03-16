@@ -195,7 +195,7 @@ if uploaded_file is not None:
             size -= 12
 
 
-if recorded_file is not None:
+if export_file is not None:
 
     st.audio(recorded_file)
 
