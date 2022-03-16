@@ -48,3 +48,4 @@ plotly
 
 # frontend
 streamlit
+pydub
