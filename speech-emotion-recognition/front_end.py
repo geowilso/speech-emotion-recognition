@@ -55,6 +55,9 @@ st.markdown(
 #st.header("1. Record your own voice")
 
 
+export_file = None
+uploaded_file = None
+
 stt_button = Button(label="Click to Record", width=100)
 
 stt_button.js_on_event(
@@ -159,6 +162,8 @@ else:
     uploaded_file = st.file_uploader("")
 
 if uploaded_file is not None:
+
+
 
     st.audio(uploaded_file)
 
