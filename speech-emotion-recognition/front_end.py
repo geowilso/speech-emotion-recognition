@@ -22,9 +22,9 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # model
-from predict import record, processing, model_predict, playback, grab_chunks
+from predict import grab_chunks  #processing, model_predict
 from graphs import draw_mel, plot_chunks
-from helper import read_audio, record, save_record
+#from helper import read_audio, record, save_record
 
 
 #new
