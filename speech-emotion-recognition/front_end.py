@@ -54,6 +54,7 @@ st.markdown(
     unsafe_allow_html=True)
 #st.header("1. Record your own voice")
 
+recorded_file = f"./temporary_recording/test.wav"
 
 stt_button = Button(label="Click to Record", width=100)
 
