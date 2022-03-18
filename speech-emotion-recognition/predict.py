@@ -104,7 +104,7 @@ def grab_chunks(uploaded_file):
     return df,wav
 
 
-def grab_chunks_uploaded(uploaded_file):
+def grab_chunks_uploaded(uploaded_file, length):
     n_mfcc = 13
     n_fft = 2048
     hop_length = 512
@@ -123,10 +123,10 @@ def grab_chunks_uploaded(uploaded_file):
 
     mfcc_list = []
 
-    while len(mfcc_T) > 125:
-        mfcc_chunk = mfcc_T[:125, :]
+    while len(mfcc_T) > length:
+        mfcc_chunk = mfcc_T[:length, :]
         mfcc_list.append(mfcc_chunk)
-        mfcc_T = mfcc_T[125:, :]
+        mfcc_T = mfcc_T[length:, :]
     mfcc_list.append(mfcc_T)
 
     mfcc_list_pad = []
