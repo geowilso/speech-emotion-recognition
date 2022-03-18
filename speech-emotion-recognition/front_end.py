@@ -167,7 +167,7 @@ if uploaded_file is not None:
 
     st.audio(uploaded_file)
 
-    df, wav = grab_chunks_uploaded(uploaded_file)
+    df, wav = grab_chunks_uploaded(uploaded_file, 150)
 
     fig = plot_chunks(df)
 
@@ -204,7 +204,7 @@ if export_file is not None:
 
     st.audio(recorded_file)
 
-    df, wav = grab_chunks(recorded_file)
+    df, wav = grab_chunks(recorded_file, 125)
 
     fig = plot_chunks(df)
 
