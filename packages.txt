@@ -1,0 +1,11 @@
+build-essential
+freeglut3-dev
+cmake
+libopenblas-dev
+libsndfile1-dev
+ffmpeg
+libasound2-dev
+libportaudio2
+portaudio19-dev
+python3-pyaudio
+libasound-dev
